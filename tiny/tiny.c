@@ -1,9 +1,9 @@
 /* $begin tinymain */
 /*
- * tiny.c - A simple, iterative HTTP/1.0 Web server that uses the 
+ * tiny.c - A simple, iterative HTTP/1.0 Web server that uses the
  *     GET method to serve static and dynamic content.
  */
-#include "csapp.h"
+#include "common.h"
 
 void doit(int fd);
 void read_requesthdrs(rio_t *rp);
@@ -11,10 +11,10 @@ int parse_uri(char *uri, char *filename, char *cgiargs);
 void serve_static(int fd, char *filename, int filesize);
 void get_filetype(char *filename, char *filetype);
 void serve_dynamic(int fd, char *filename, char *cgiargs);
-void clienterror(int fd, char *cause, char *errnum, 
+void clienterror(int fd, char *cause, char *errnum,
 		 char *shortmsg, char *longmsg);
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     int listenfd, connfd, port;
     socklen_t clientlen;
@@ -41,14 +41,14 @@ int main(int argc, char **argv)
  * doit - handle one HTTP request/response transaction
  */
 /* $begin doit */
-void doit(int fd) 
+void doit(int fd)
 {
     int is_static;
     struct stat sbuf;
     char buf[MAXLINE], method[MAXLINE], uri[MAXLINE], version[MAXLINE];
     char filename[MAXLINE], cgiargs[MAXLINE];
     rio_t rio;
-  
+
     /* Read request line and headers */
     Rio_readinitb(&rio, fd);
     Rio_readlineb(&rio, buf, MAXLINE);                   //line:netp:doit:readrequest
@@ -70,7 +70,7 @@ void doit(int fd)
 	return;
     }                                                    //line:netp:doit:endnotfound
 
-    if (is_static) { /* Serve static content */          
+    if (is_static) { /* Serve static content */
 	if (!(S_ISREG(sbuf.st_mode)) || !(S_IRUSR & sbuf.st_mode)) { //line:netp:doit:readable
 	    clienterror(fd, filename, "403", "Forbidden",
 			"Tiny couldn't read the file");
@@ -93,7 +93,7 @@ void doit(int fd)
  * read_requesthdrs - read HTTP request headers
  */
 /* $begin read_requesthdrs */
-void read_requesthdrs(rio_t *rp) 
+void read_requesthdrs(rio_t *rp)
 {
     char buf[MAXLINE];
 
@@ -111,7 +111,7 @@ void read_requesthdrs(rio_t *rp)
  *             return 0 if dynamic content, 1 if static
  */
 /* $begin parse_uri */
-int parse_uri(char *uri, char *filename, char *cgiargs) 
+int parse_uri(char *uri, char *filename, char *cgiargs)
 {
     char *ptr;
 
@@ -129,7 +129,7 @@ int parse_uri(char *uri, char *filename, char *cgiargs)
 	    strcpy(cgiargs, ptr+1);
 	    *ptr = '\0';
 	}
-	else 
+	else
 	    strcpy(cgiargs, "");                         //line:netp:parseuri:endextract
 	strcpy(filename, ".");                           //line:netp:parseuri:beginconvert2
 	strcat(filename, uri);                           //line:netp:parseuri:endconvert2
@@ -139,14 +139,14 @@ int parse_uri(char *uri, char *filename, char *cgiargs)
 /* $end parse_uri */
 
 /*
- * serve_static - copy a file back to the client 
+ * serve_static - copy a file back to the client
  */
 /* $begin serve_static */
-void serve_static(int fd, char *filename, int filesize) 
+void serve_static(int fd, char *filename, int filesize)
 {
     int srcfd;
     char *srcp, filetype[MAXLINE], buf[MAXBUF];
- 
+
     /* Send response headers to client */
     get_filetype(filename, filetype);       //line:netp:servestatic:getfiletype
     sprintf(buf, "HTTP/1.0 200 OK\r\n");    //line:netp:servestatic:beginserve
@@ -169,7 +169,7 @@ void serve_static(int fd, char *filename, int filesize)
 /*
  * get_filetype - derive file type from file name
  */
-void get_filetype(char *filename, char *filetype) 
+void get_filetype(char *filename, char *filetype)
 {
     if (strstr(filename, ".html"))
 	strcpy(filetype, "text/html");
@@ -179,23 +179,23 @@ void get_filetype(char *filename, char *filetype)
 	strcpy(filetype, "image/jpeg");
     else
 	strcpy(filetype, "text/plain");
-}  
+}
 /* $end serve_static */
 
 /*
  * serve_dynamic - run a CGI program on behalf of the client
  */
 /* $begin serve_dynamic */
-void serve_dynamic(int fd, char *filename, char *cgiargs) 
+void serve_dynamic(int fd, char *filename, char *cgiargs)
 {
     char buf[MAXLINE], *emptylist[] = { NULL };
 
     /* Return first part of HTTP response */
-    sprintf(buf, "HTTP/1.0 200 OK\r\n"); 
+    sprintf(buf, "HTTP/1.0 200 OK\r\n");
     Rio_writen(fd, buf, strlen(buf));
     sprintf(buf, "Server: Tiny Web Server\r\n");
     Rio_writen(fd, buf, strlen(buf));
-  
+
     if (Fork() == 0) { /* Child */ //line:netp:servedynamic:fork
 	/* Real server would set all CGI vars here */
 	setenv("QUERY_STRING", cgiargs, 1); //line:netp:servedynamic:setenv
@@ -210,8 +210,8 @@ void serve_dynamic(int fd, char *filename, char *cgiargs)
  * clienterror - returns an error message to the client
  */
 /* $begin clienterror */
-void clienterror(int fd, char *cause, char *errnum, 
-		 char *shortmsg, char *longmsg) 
+void clienterror(int fd, char *cause, char *errnum,
+		 char *shortmsg, char *longmsg)
 {
     char buf[MAXLINE], body[MAXBUF];
 

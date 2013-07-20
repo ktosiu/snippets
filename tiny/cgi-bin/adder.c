@@ -2,7 +2,7 @@
  * adder.c - a minimal CGI program that adds two numbers together
  */
 /* $begin adder */
-#include "csapp.h"
+#include "common.h"
 
 int main(void) {
     char *buf, *p;
@@ -23,10 +23,10 @@ int main(void) {
     sprintf(content, "QUERY_STRING=%s", buf);
     sprintf(content, "Welcome to add.com: ");
     sprintf(content, "%sTHE Internet addition portal.\r\n<p>", content);
-    sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>", 
+    sprintf(content, "%sThe answer is: %d + %d = %d\r\n<p>",
 	    content, n1, n2, n1 + n2);
     sprintf(content, "%sThanks for visiting!\r\n", content);
-  
+
     /* Generate the HTTP response */
     printf("Connection: close\r\n");
     printf("Content-length: %d\r\n", (int)strlen(content));
