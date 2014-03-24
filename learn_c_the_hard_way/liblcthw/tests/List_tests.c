@@ -78,6 +78,7 @@ char *test_shift()
     mu_assert(List_count(list) == 0, "Wrong count after shift");
     return NULL;
 }
+
 char *all_tests()
 {
     mu_suite_start();
@@ -89,4 +90,5 @@ char *all_tests()
     mu_run_test(test_destroy); 
     return NULL;
 }
-RUN_TESTS(all_tests);
+
+mu_run_test_suite(all_tests);
