@@ -9,7 +9,7 @@ do
             echo $i PASS
         else
             echo "ERROR in test $i: here's tests/tests.log"
-            echo "--------------------------"
+            echo "------"
             tail tests/tests.log
             exit 1
         fi

@@ -49,8 +49,8 @@ valgrind:
 clean:
 	rm -rf build $(OBJECTS) $(TESTS)
 	rm -f tests/tests.log
-	find . -name ".gc*" -exec rm {} \;
-	rm -rf `find . -name ".dSYM" -print`
+	find . -name "*.gc*" -exec rm {} \;
+	rm -rf `find . -name "*.dSYM" -print`
 
 # THe installer
 install: all
