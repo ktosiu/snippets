@@ -1,3 +1,6 @@
+#Should set your lib name here
+LIB_NAME=YOUR_LIBRARY
+
 # OPTFLAGS lets people augment the build options as needed
 CFLAGS=-g -o2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
 # Used when linking a library. OPTLIBS enables the user to augment needed options.
@@ -15,7 +18,7 @@ TEST_SRC=$(wildcard tests/*_tests.c)
 TESTS=$(patsubst %.c, %, $(TEST_SRC))
 
 # the "YOUR_LIBRARY" should be the actual name your library is.
-TARGET=build/libYOUR_LIBRARY.a
+TARGET=build/lib$(LIB_NAME).a
 SO_TARGET=$(patsubst %.a, %.so, $(TARGET))
 
 # The Target build
@@ -49,7 +52,7 @@ valgrind:
 clean:
 	rm -rf build $(OBJECTS) $(TESTS)
 	rm -f tests/tests.log
-	find . -name "*.gc*" -exec rm {} \;
+	find . -name ".gc*" -exec rm {} \;
 	rm -rf `find . -name "*.dSYM" -print`
 
 # THe installer
