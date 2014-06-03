@@ -61,6 +61,7 @@ flags = [
 '-x','c++',
 '-I','.',
 '-isystem', '/usr/include/c++/4.8',
+'-isystem', '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/c++/v1',
 '-isystem','/usr/include',
 '-isystem','/usr/local/include',
 ]
