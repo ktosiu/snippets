@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E9C901741968372100364EC5"
+               BlueprintIdentifier = "E9C901B4196837AF00364EC5"
                BuildableName = "SpeakLine.app"
                BlueprintName = "SpeakLine"
                ReferencedContainer = "container:SpeakLine.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E9C901951968372200364EC5"
+               BlueprintIdentifier = "E9C901D5196837B000364EC5"
                BuildableName = "SpeakLineTests.xctest"
                BlueprintName = "SpeakLineTests"
                ReferencedContainer = "container:SpeakLine.xcodeproj">
@@ -42,7 +42,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E9C901741968372100364EC5"
+            BlueprintIdentifier = "E9C901B4196837AF00364EC5"
             BuildableName = "SpeakLine.app"
             BlueprintName = "SpeakLine"
             ReferencedContainer = "container:SpeakLine.xcodeproj">
@@ -61,7 +61,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E9C901741968372100364EC5"
+            BlueprintIdentifier = "E9C901B4196837AF00364EC5"
             BuildableName = "SpeakLine.app"
             BlueprintName = "SpeakLine"
             ReferencedContainer = "container:SpeakLine.xcodeproj">
@@ -79,7 +79,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E9C901741968372100364EC5"
+            BlueprintIdentifier = "E9C901B4196837AF00364EC5"
             BuildableName = "SpeakLine.app"
             BlueprintName = "SpeakLine"
             ReferencedContainer = "container:SpeakLine.xcodeproj">

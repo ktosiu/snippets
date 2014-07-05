@@ -7,149 +7,149 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E9C901791968372100364EC5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C901781968372100364EC5 /* Cocoa.framework */; };
-		E9C901831968372100364EC5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9C901811968372100364EC5 /* InfoPlist.strings */; };
-		E9C901851968372100364EC5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C901841968372100364EC5 /* main.m */; };
-		E9C901891968372100364EC5 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E9C901871968372100364EC5 /* Credits.rtf */; };
-		E9C9018C1968372100364EC5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C9018B1968372100364EC5 /* AppDelegate.m */; };
-		E9C9018F1968372200364EC5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9C9018D1968372200364EC5 /* MainMenu.xib */; };
-		E9C901911968372200364EC5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9C901901968372200364EC5 /* Images.xcassets */; };
-		E9C901981968372200364EC5 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C901971968372200364EC5 /* XCTest.framework */; };
-		E9C901991968372200364EC5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C901781968372100364EC5 /* Cocoa.framework */; };
-		E9C901A11968372200364EC5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9C9019F1968372200364EC5 /* InfoPlist.strings */; };
-		E9C901A31968372200364EC5 /* SpeakLineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C901A21968372200364EC5 /* SpeakLineTests.m */; };
+		E9C901B9196837AF00364EC5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C901B8196837AF00364EC5 /* Cocoa.framework */; };
+		E9C901C3196837AF00364EC5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9C901C1196837AF00364EC5 /* InfoPlist.strings */; };
+		E9C901C5196837AF00364EC5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C901C4196837AF00364EC5 /* main.m */; };
+		E9C901C9196837AF00364EC5 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E9C901C7196837AF00364EC5 /* Credits.rtf */; };
+		E9C901CC196837AF00364EC5 /* SpeakLineAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C901CB196837AF00364EC5 /* SpeakLineAppDelegate.m */; };
+		E9C901CF196837B000364EC5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9C901CD196837B000364EC5 /* MainMenu.xib */; };
+		E9C901D1196837B000364EC5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9C901D0196837B000364EC5 /* Images.xcassets */; };
+		E9C901D8196837B000364EC5 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C901D7196837B000364EC5 /* XCTest.framework */; };
+		E9C901D9196837B000364EC5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C901B8196837AF00364EC5 /* Cocoa.framework */; };
+		E9C901E1196837B000364EC5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9C901DF196837B000364EC5 /* InfoPlist.strings */; };
+		E9C901E3196837B000364EC5 /* SpeakLineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C901E2196837B000364EC5 /* SpeakLineTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E9C9019A1968372200364EC5 /* PBXContainerItemProxy */ = {
+		E9C901DA196837B000364EC5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = E9C9016D1968372100364EC5 /* Project object */;
+			containerPortal = E9C901AD196837AF00364EC5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = E9C901741968372100364EC5;
+			remoteGlobalIDString = E9C901B4196837AF00364EC5;
 			remoteInfo = SpeakLine;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E9C901751968372100364EC5 /* SpeakLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeakLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9C901781968372100364EC5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		E9C9017B1968372100364EC5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		E9C9017C1968372100364EC5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		E9C9017D1968372100364EC5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		E9C901801968372100364EC5 /* SpeakLine-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SpeakLine-Info.plist"; sourceTree = "<group>"; };
-		E9C901821968372100364EC5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		E9C901841968372100364EC5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		E9C901861968372100364EC5 /* SpeakLine-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SpeakLine-Prefix.pch"; sourceTree = "<group>"; };
-		E9C901881968372100364EC5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		E9C9018A1968372100364EC5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		E9C9018B1968372100364EC5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		E9C9018E1968372200364EC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		E9C901901968372200364EC5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		E9C901961968372200364EC5 /* SpeakLineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpeakLineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9C901971968372200364EC5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		E9C9019E1968372200364EC5 /* SpeakLineTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SpeakLineTests-Info.plist"; sourceTree = "<group>"; };
-		E9C901A01968372200364EC5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		E9C901A21968372200364EC5 /* SpeakLineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeakLineTests.m; sourceTree = "<group>"; };
+		E9C901B5196837AF00364EC5 /* SpeakLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeakLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9C901B8196837AF00364EC5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E9C901BB196837AF00364EC5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E9C901BC196837AF00364EC5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E9C901BD196837AF00364EC5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E9C901C0196837AF00364EC5 /* SpeakLine-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SpeakLine-Info.plist"; sourceTree = "<group>"; };
+		E9C901C2196837AF00364EC5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E9C901C4196837AF00364EC5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E9C901C6196837AF00364EC5 /* SpeakLine-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SpeakLine-Prefix.pch"; sourceTree = "<group>"; };
+		E9C901C8196837AF00364EC5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E9C901CA196837AF00364EC5 /* SpeakLineAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeakLineAppDelegate.h; sourceTree = "<group>"; };
+		E9C901CB196837AF00364EC5 /* SpeakLineAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeakLineAppDelegate.m; sourceTree = "<group>"; };
+		E9C901CE196837B000364EC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		E9C901D0196837B000364EC5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		E9C901D6196837B000364EC5 /* SpeakLineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpeakLineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9C901D7196837B000364EC5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		E9C901DE196837B000364EC5 /* SpeakLineTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SpeakLineTests-Info.plist"; sourceTree = "<group>"; };
+		E9C901E0196837B000364EC5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E9C901E2196837B000364EC5 /* SpeakLineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeakLineTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E9C901721968372100364EC5 /* Frameworks */ = {
+		E9C901B2196837AF00364EC5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C901791968372100364EC5 /* Cocoa.framework in Frameworks */,
+				E9C901B9196837AF00364EC5 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E9C901931968372200364EC5 /* Frameworks */ = {
+		E9C901D3196837B000364EC5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C901991968372200364EC5 /* Cocoa.framework in Frameworks */,
-				E9C901981968372200364EC5 /* XCTest.framework in Frameworks */,
+				E9C901D9196837B000364EC5 /* Cocoa.framework in Frameworks */,
+				E9C901D8196837B000364EC5 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E9C9016C1968372100364EC5 = {
+		E9C901AC196837AF00364EC5 = {
 			isa = PBXGroup;
 			children = (
-				E9C9017E1968372100364EC5 /* SpeakLine */,
-				E9C9019C1968372200364EC5 /* SpeakLineTests */,
-				E9C901771968372100364EC5 /* Frameworks */,
-				E9C901761968372100364EC5 /* Products */,
+				E9C901BE196837AF00364EC5 /* SpeakLine */,
+				E9C901DC196837B000364EC5 /* SpeakLineTests */,
+				E9C901B7196837AF00364EC5 /* Frameworks */,
+				E9C901B6196837AF00364EC5 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E9C901761968372100364EC5 /* Products */ = {
+		E9C901B6196837AF00364EC5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E9C901751968372100364EC5 /* SpeakLine.app */,
-				E9C901961968372200364EC5 /* SpeakLineTests.xctest */,
+				E9C901B5196837AF00364EC5 /* SpeakLine.app */,
+				E9C901D6196837B000364EC5 /* SpeakLineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E9C901771968372100364EC5 /* Frameworks */ = {
+		E9C901B7196837AF00364EC5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E9C901781968372100364EC5 /* Cocoa.framework */,
-				E9C901971968372200364EC5 /* XCTest.framework */,
-				E9C9017A1968372100364EC5 /* Other Frameworks */,
+				E9C901B8196837AF00364EC5 /* Cocoa.framework */,
+				E9C901D7196837B000364EC5 /* XCTest.framework */,
+				E9C901BA196837AF00364EC5 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E9C9017A1968372100364EC5 /* Other Frameworks */ = {
+		E9C901BA196837AF00364EC5 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E9C9017B1968372100364EC5 /* AppKit.framework */,
-				E9C9017C1968372100364EC5 /* CoreData.framework */,
-				E9C9017D1968372100364EC5 /* Foundation.framework */,
+				E9C901BB196837AF00364EC5 /* AppKit.framework */,
+				E9C901BC196837AF00364EC5 /* CoreData.framework */,
+				E9C901BD196837AF00364EC5 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		E9C9017E1968372100364EC5 /* SpeakLine */ = {
+		E9C901BE196837AF00364EC5 /* SpeakLine */ = {
 			isa = PBXGroup;
 			children = (
-				E9C9018A1968372100364EC5 /* AppDelegate.h */,
-				E9C9018B1968372100364EC5 /* AppDelegate.m */,
-				E9C9018D1968372200364EC5 /* MainMenu.xib */,
-				E9C901901968372200364EC5 /* Images.xcassets */,
-				E9C9017F1968372100364EC5 /* Supporting Files */,
+				E9C901CA196837AF00364EC5 /* SpeakLineAppDelegate.h */,
+				E9C901CB196837AF00364EC5 /* SpeakLineAppDelegate.m */,
+				E9C901CD196837B000364EC5 /* MainMenu.xib */,
+				E9C901D0196837B000364EC5 /* Images.xcassets */,
+				E9C901BF196837AF00364EC5 /* Supporting Files */,
 			);
 			path = SpeakLine;
 			sourceTree = "<group>";
 		};
-		E9C9017F1968372100364EC5 /* Supporting Files */ = {
+		E9C901BF196837AF00364EC5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				E9C901801968372100364EC5 /* SpeakLine-Info.plist */,
-				E9C901811968372100364EC5 /* InfoPlist.strings */,
-				E9C901841968372100364EC5 /* main.m */,
-				E9C901861968372100364EC5 /* SpeakLine-Prefix.pch */,
-				E9C901871968372100364EC5 /* Credits.rtf */,
+				E9C901C0196837AF00364EC5 /* SpeakLine-Info.plist */,
+				E9C901C1196837AF00364EC5 /* InfoPlist.strings */,
+				E9C901C4196837AF00364EC5 /* main.m */,
+				E9C901C6196837AF00364EC5 /* SpeakLine-Prefix.pch */,
+				E9C901C7196837AF00364EC5 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		E9C9019C1968372200364EC5 /* SpeakLineTests */ = {
+		E9C901DC196837B000364EC5 /* SpeakLineTests */ = {
 			isa = PBXGroup;
 			children = (
-				E9C901A21968372200364EC5 /* SpeakLineTests.m */,
-				E9C9019D1968372200364EC5 /* Supporting Files */,
+				E9C901E2196837B000364EC5 /* SpeakLineTests.m */,
+				E9C901DD196837B000364EC5 /* Supporting Files */,
 			);
 			path = SpeakLineTests;
 			sourceTree = "<group>";
 		};
-		E9C9019D1968372200364EC5 /* Supporting Files */ = {
+		E9C901DD196837B000364EC5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				E9C9019E1968372200364EC5 /* SpeakLineTests-Info.plist */,
-				E9C9019F1968372200364EC5 /* InfoPlist.strings */,
+				E9C901DE196837B000364EC5 /* SpeakLineTests-Info.plist */,
+				E9C901DF196837B000364EC5 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -157,13 +157,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E9C901741968372100364EC5 /* SpeakLine */ = {
+		E9C901B4196837AF00364EC5 /* SpeakLine */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E9C901A61968372200364EC5 /* Build configuration list for PBXNativeTarget "SpeakLine" */;
+			buildConfigurationList = E9C901E6196837B000364EC5 /* Build configuration list for PBXNativeTarget "SpeakLine" */;
 			buildPhases = (
-				E9C901711968372100364EC5 /* Sources */,
-				E9C901721968372100364EC5 /* Frameworks */,
-				E9C901731968372100364EC5 /* Resources */,
+				E9C901B1196837AF00364EC5 /* Sources */,
+				E9C901B2196837AF00364EC5 /* Frameworks */,
+				E9C901B3196837AF00364EC5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -171,42 +171,43 @@
 			);
 			name = SpeakLine;
 			productName = SpeakLine;
-			productReference = E9C901751968372100364EC5 /* SpeakLine.app */;
+			productReference = E9C901B5196837AF00364EC5 /* SpeakLine.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E9C901951968372200364EC5 /* SpeakLineTests */ = {
+		E9C901D5196837B000364EC5 /* SpeakLineTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E9C901A91968372200364EC5 /* Build configuration list for PBXNativeTarget "SpeakLineTests" */;
+			buildConfigurationList = E9C901E9196837B000364EC5 /* Build configuration list for PBXNativeTarget "SpeakLineTests" */;
 			buildPhases = (
-				E9C901921968372200364EC5 /* Sources */,
-				E9C901931968372200364EC5 /* Frameworks */,
-				E9C901941968372200364EC5 /* Resources */,
+				E9C901D2196837B000364EC5 /* Sources */,
+				E9C901D3196837B000364EC5 /* Frameworks */,
+				E9C901D4196837B000364EC5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E9C9019B1968372200364EC5 /* PBXTargetDependency */,
+				E9C901DB196837B000364EC5 /* PBXTargetDependency */,
 			);
 			name = SpeakLineTests;
 			productName = SpeakLineTests;
-			productReference = E9C901961968372200364EC5 /* SpeakLineTests.xctest */;
+			productReference = E9C901D6196837B000364EC5 /* SpeakLineTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E9C9016D1968372100364EC5 /* Project object */ = {
+		E9C901AD196837AF00364EC5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = SpeakLine;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = zouxu;
 				TargetAttributes = {
-					E9C901951968372200364EC5 = {
-						TestTargetID = E9C901741968372100364EC5;
+					E9C901D5196837B000364EC5 = {
+						TestTargetID = E9C901B4196837AF00364EC5;
 					};
 				};
 			};
-			buildConfigurationList = E9C901701968372100364EC5 /* Build configuration list for PBXProject "SpeakLine" */;
+			buildConfigurationList = E9C901B0196837AF00364EC5 /* Build configuration list for PBXProject "SpeakLine" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -214,96 +215,96 @@
 				en,
 				Base,
 			);
-			mainGroup = E9C9016C1968372100364EC5;
-			productRefGroup = E9C901761968372100364EC5 /* Products */;
+			mainGroup = E9C901AC196837AF00364EC5;
+			productRefGroup = E9C901B6196837AF00364EC5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E9C901741968372100364EC5 /* SpeakLine */,
-				E9C901951968372200364EC5 /* SpeakLineTests */,
+				E9C901B4196837AF00364EC5 /* SpeakLine */,
+				E9C901D5196837B000364EC5 /* SpeakLineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		E9C901731968372100364EC5 /* Resources */ = {
+		E9C901B3196837AF00364EC5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C901831968372100364EC5 /* InfoPlist.strings in Resources */,
-				E9C901911968372200364EC5 /* Images.xcassets in Resources */,
-				E9C901891968372100364EC5 /* Credits.rtf in Resources */,
-				E9C9018F1968372200364EC5 /* MainMenu.xib in Resources */,
+				E9C901C3196837AF00364EC5 /* InfoPlist.strings in Resources */,
+				E9C901D1196837B000364EC5 /* Images.xcassets in Resources */,
+				E9C901C9196837AF00364EC5 /* Credits.rtf in Resources */,
+				E9C901CF196837B000364EC5 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E9C901941968372200364EC5 /* Resources */ = {
+		E9C901D4196837B000364EC5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C901A11968372200364EC5 /* InfoPlist.strings in Resources */,
+				E9C901E1196837B000364EC5 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E9C901711968372100364EC5 /* Sources */ = {
+		E9C901B1196837AF00364EC5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C9018C1968372100364EC5 /* AppDelegate.m in Sources */,
-				E9C901851968372100364EC5 /* main.m in Sources */,
+				E9C901C5196837AF00364EC5 /* main.m in Sources */,
+				E9C901CC196837AF00364EC5 /* SpeakLineAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E9C901921968372200364EC5 /* Sources */ = {
+		E9C901D2196837B000364EC5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9C901A31968372200364EC5 /* SpeakLineTests.m in Sources */,
+				E9C901E3196837B000364EC5 /* SpeakLineTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E9C9019B1968372200364EC5 /* PBXTargetDependency */ = {
+		E9C901DB196837B000364EC5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E9C901741968372100364EC5 /* SpeakLine */;
-			targetProxy = E9C9019A1968372200364EC5 /* PBXContainerItemProxy */;
+			target = E9C901B4196837AF00364EC5 /* SpeakLine */;
+			targetProxy = E9C901DA196837B000364EC5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		E9C901811968372100364EC5 /* InfoPlist.strings */ = {
+		E9C901C1196837AF00364EC5 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				E9C901821968372100364EC5 /* en */,
+				E9C901C2196837AF00364EC5 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		E9C901871968372100364EC5 /* Credits.rtf */ = {
+		E9C901C7196837AF00364EC5 /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
-				E9C901881968372100364EC5 /* en */,
+				E9C901C8196837AF00364EC5 /* en */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
-		E9C9018D1968372200364EC5 /* MainMenu.xib */ = {
+		E9C901CD196837B000364EC5 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				E9C9018E1968372200364EC5 /* Base */,
+				E9C901CE196837B000364EC5 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
-		E9C9019F1968372200364EC5 /* InfoPlist.strings */ = {
+		E9C901DF196837B000364EC5 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				E9C901A01968372200364EC5 /* en */,
+				E9C901E0196837B000364EC5 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -311,7 +312,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		E9C901A41968372200364EC5 /* Debug */ = {
+		E9C901E4196837B000364EC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -349,7 +350,7 @@
 			};
 			name = Debug;
 		};
-		E9C901A51968372200364EC5 /* Release */ = {
+		E9C901E5196837B000364EC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -381,7 +382,7 @@
 			};
 			name = Release;
 		};
-		E9C901A71968372200364EC5 /* Debug */ = {
+		E9C901E7196837B000364EC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -394,7 +395,7 @@
 			};
 			name = Debug;
 		};
-		E9C901A81968372200364EC5 /* Release */ = {
+		E9C901E8196837B000364EC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -407,7 +408,7 @@
 			};
 			name = Release;
 		};
-		E9C901AA1968372200364EC5 /* Debug */ = {
+		E9C901EA196837B000364EC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SpeakLine.app/Contents/MacOS/SpeakLine";
@@ -429,7 +430,7 @@
 			};
 			name = Debug;
 		};
-		E9C901AB1968372200364EC5 /* Release */ = {
+		E9C901EB196837B000364EC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SpeakLine.app/Contents/MacOS/SpeakLine";
@@ -450,32 +451,32 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E9C901701968372100364EC5 /* Build configuration list for PBXProject "SpeakLine" */ = {
+		E9C901B0196837AF00364EC5 /* Build configuration list for PBXProject "SpeakLine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E9C901A41968372200364EC5 /* Debug */,
-				E9C901A51968372200364EC5 /* Release */,
+				E9C901E4196837B000364EC5 /* Debug */,
+				E9C901E5196837B000364EC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E9C901A61968372200364EC5 /* Build configuration list for PBXNativeTarget "SpeakLine" */ = {
+		E9C901E6196837B000364EC5 /* Build configuration list for PBXNativeTarget "SpeakLine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E9C901A71968372200364EC5 /* Debug */,
-				E9C901A81968372200364EC5 /* Release */,
+				E9C901E7196837B000364EC5 /* Debug */,
+				E9C901E8196837B000364EC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
-		E9C901A91968372200364EC5 /* Build configuration list for PBXNativeTarget "SpeakLineTests" */ = {
+		E9C901E9196837B000364EC5 /* Build configuration list for PBXNativeTarget "SpeakLineTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E9C901AA1968372200364EC5 /* Debug */,
-				E9C901AB1968372200364EC5 /* Release */,
+				E9C901EA196837B000364EC5 /* Debug */,
+				E9C901EB196837B000364EC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E9C9016D1968372100364EC5 /* Project object */;
+	rootObject = E9C901AD196837AF00364EC5 /* Project object */;
 }
