@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeakLine/SpeakLineAppDelegate.m"
-            timestampString = "426261560.211374"
+            timestampString = "426329419.632565"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "18"
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeakLine/SpeakLineAppDelegate.m"
-            timestampString = "426261861.394342"
+            timestampString = "426330656.011352"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
             landmarkName = "-sayIt:"
             landmarkType = "5">
          </BreakpointContent>
