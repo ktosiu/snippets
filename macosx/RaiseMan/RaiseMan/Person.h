@@ -10,4 +10,7 @@
 
 @interface Person : NSObject
 
+@property (readwrite, copy) NSString *personName;
+@property (readwrite) float expectedRaise;
+
 @end

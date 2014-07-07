@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E96ECC0A196AE12400A395B6 /* PreferenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = E96ECC09196AE12400A395B6 /* PreferenceController.m */; };
+		E96ECC0D196AE16F00A395B6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = E96ECC0C196AE16F00A395B6 /* AppController.m */; };
+		E96ECC0F196AE2E700A395B6 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = E96ECC0E196AE2E700A395B6 /* Preferences.xib */; };
 		E98A5DDE196981140083858E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E98A5DDD196981140083858E /* Cocoa.framework */; };
 		E98A5DE8196981140083858E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E98A5DE6196981140083858E /* InfoPlist.strings */; };
 		E98A5DEA196981140083858E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E98A5DE9196981140083858E /* main.m */; };
@@ -19,6 +22,7 @@
 		E98A5E01196981150083858E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E98A5DDD196981140083858E /* Cocoa.framework */; };
 		E98A5E09196981150083858E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E98A5E07196981150083858E /* InfoPlist.strings */; };
 		E98A5E0B196981150083858E /* RaiseManTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E98A5E0A196981150083858E /* RaiseManTests.m */; };
+		E98A5E16196981CA0083858E /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = E98A5E15196981CA0083858E /* Person.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +36,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E96ECC08196AE12400A395B6 /* PreferenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceController.h; sourceTree = "<group>"; };
+		E96ECC09196AE12400A395B6 /* PreferenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController.m; sourceTree = "<group>"; };
+		E96ECC0B196AE16F00A395B6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
+		E96ECC0C196AE16F00A395B6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
+		E96ECC0E196AE2E700A395B6 /* Preferences.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Preferences.xib; sourceTree = "<group>"; };
 		E98A5DDA196981140083858E /* RaiseMan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RaiseMan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E98A5DDD196981140083858E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		E98A5DE0196981140083858E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -52,6 +61,8 @@
 		E98A5E06196981150083858E /* RaiseManTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RaiseManTests-Info.plist"; sourceTree = "<group>"; };
 		E98A5E08196981150083858E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E98A5E0A196981150083858E /* RaiseManTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RaiseManTests.m; sourceTree = "<group>"; };
+		E98A5E14196981CA0083858E /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		E98A5E15196981CA0083858E /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,10 +128,11 @@
 		E98A5DE3196981140083858E /* RaiseMan */ = {
 			isa = PBXGroup;
 			children = (
+				E98A5E19196982910083858E /* View */,
+				E98A5E18196982840083858E /* Controller */,
+				E98A5E171969826B0083858E /* Model */,
 				E98A5DEF196981140083858E /* RMDocument.h */,
 				E98A5DF0196981140083858E /* RMDocument.m */,
-				E98A5DF2196981140083858E /* RMDocument.xib */,
-				E98A5DF5196981140083858E /* MainMenu.xib */,
 				E98A5DF8196981140083858E /* Images.xcassets */,
 				E98A5DE4196981140083858E /* Supporting Files */,
 			);
@@ -155,6 +167,36 @@
 				E98A5E07196981150083858E /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E98A5E171969826B0083858E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E98A5E14196981CA0083858E /* Person.h */,
+				E98A5E15196981CA0083858E /* Person.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		E98A5E18196982840083858E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				E96ECC08196AE12400A395B6 /* PreferenceController.h */,
+				E96ECC0B196AE16F00A395B6 /* AppController.h */,
+				E96ECC0C196AE16F00A395B6 /* AppController.m */,
+				E96ECC09196AE12400A395B6 /* PreferenceController.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		E98A5E19196982910083858E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E96ECC0E196AE2E700A395B6 /* Preferences.xib */,
+				E98A5DF2196981140083858E /* RMDocument.xib */,
+				E98A5DF5196981140083858E /* MainMenu.xib */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,6 +280,7 @@
 				E98A5DF9196981140083858E /* Images.xcassets in Resources */,
 				E98A5DE8196981140083858E /* InfoPlist.strings in Resources */,
 				E98A5DEE196981140083858E /* Credits.rtf in Resources */,
+				E96ECC0F196AE2E700A395B6 /* Preferences.xib in Resources */,
 				E98A5DF7196981140083858E /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,7 +300,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E96ECC0A196AE12400A395B6 /* PreferenceController.m in Sources */,
+				E98A5E16196981CA0083858E /* Person.m in Sources */,
 				E98A5DEA196981140083858E /* main.m in Sources */,
+				E96ECC0D196AE16F00A395B6 /* AppController.m in Sources */,
 				E98A5DF1196981140083858E /* RMDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,6 +525,7 @@
 				E98A5E10196981150083858E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E98A5E11196981150083858E /* Build configuration list for PBXNativeTarget "RaiseManTests" */ = {
 			isa = XCConfigurationList;
@@ -487,6 +534,7 @@
 				E98A5E13196981150083858E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

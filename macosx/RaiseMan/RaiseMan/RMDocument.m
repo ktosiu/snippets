@@ -7,6 +7,7 @@
 //
 
 #import "RMDocument.h"
+#import "Person.h"
 
 @implementation RMDocument
 
@@ -14,7 +15,7 @@
 {
     self = [super init];
     if (self) {
-        // Add your subclass-specific initialization here.
+        _employees = [[NSMutableArray alloc]init];
     }
     return self;
 }
@@ -54,6 +55,29 @@
     NSException *exception = [NSException exceptionWithName:@"UnimplementedMethod" reason:[NSString stringWithFormat:@"%@ is unimplemented", NSStringFromSelector(_cmd)] userInfo:nil];
     @throw exception;
     return YES;
+}
+
+- (void)insertObject:(Person *)p inEmployeesAtIndex:(NSUInteger)index
+{
+    NSUndoManager *undo = [self undoManager];
+    [[undo prepareWithInvocationTarget:self] removeObjectFromEmployeesAtIndex:index];
+    if(![undo isUndoing])
+    {
+        [undo setActionName:@"Add Persion"];
+    }
+    [_employees insertObject:p atIndex:index];
+}
+
+- (void)removeObjectFromEmployeesAtIndex:(NSUInteger)index
+{
+    Person *p = [_employees objectAtIndex:index];
+    NSUndoManager *undo = [self undoManager];
+    [[undo prepareWithInvocationTarget:self] insertObject:p inEmployeesAtIndex:index];
+    if(![undo isUndoing])
+    {
+        [undo setActionName:@"Remove Person"];
+    }
+    [_employees removeObjectAtIndex:index];
 }
 
 @end
