@@ -10,6 +10,6 @@
   (define next-guess (improve x guess))
   (if (good-enough? guess next-guess)
       guess
-      (cube-iter next-guess guess)))
+      (cube-iter next-guess x)))
 
-(sqrt-iter 1.0 8)
+(cube-iter 1.0 9)
