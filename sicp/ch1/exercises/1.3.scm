@@ -10,3 +10,9 @@
         ((and (<= c a) (<= c b)) (sum-of-squares a b))))
 
 (sum-of-squares-of-two-larger-numbers 3 2 1)
+
+(define (sosotln a b c)
+  (cond ((and (< a b) (a c)) (sum-of-squares b c))
+        (else (sum-of-squares a (max b c)))))
+
+(sosotln 3 2 2)
