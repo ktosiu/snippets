@@ -5,4 +5,4 @@
       angle
       (p (sine (/ angle 3.0)))))
 
-(sine 1.3)
+(sine 1.57)
