@@ -19,4 +19,4 @@
                       (permutations (remove x s))))
                s)))
 
-(permutations (list 1 2 3 a2#a2))
+(permutations (list 1 2 3))
