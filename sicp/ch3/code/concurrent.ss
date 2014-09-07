@@ -1,0 +1,12 @@
+(define (parallel-execute . thunks)
+  (for-each thread thunks))
+
+(define (make-serializer)
+  (let ((mutex (make-semaphore 1)))
+    (lambda (p)
+      (define (serialized-p . args)
+        (semaphore-wait mutex)
+        (let ((val (apply p args)))
+          (semaphore-post mutex)
+          val))
+      serialized-p)))
