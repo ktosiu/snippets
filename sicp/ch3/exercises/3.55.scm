@@ -7,4 +7,4 @@
 
 (define s (partial-sums (integers-starting-from 1)))
 
-(stream-ref s 100)
+(stream-ref s 0)
