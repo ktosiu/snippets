@@ -1,4 +1,18 @@
 (load "./interpreter.scm")
+; 4.1.1
+(define the-env (cons (make-frame '() '()) '()))
+(eval '(define a 1) the-env)
+(eval 'a the-env)
+
+(apply (make-procedure '(a b) '(a) the-env) '(2 1))
+
+(list-of-values '(a b c) the-env)
+(eval-if '(if #t 1 2) the-env)
+(eval-sequence '((define b 2)
+                 (define c 3))
+               the-env)
+(eval-assignment '(set! a 11) the-env)
+(eval-definition '(define a 1) the-env)
 
 ; 4.1.2
 (self-evaluating? 1)
@@ -61,9 +75,40 @@
 (cond-clauses cond-exp)
 (cond->if cond-exp)
 
-the-empty-environment
-the-global-environment
+; 4.1.3
+(true? '())
+(true? #f)
+(false? '())
+(false? #f)
 
+(define procedure-exp
+  (make-procedure '(a b)
+                  '(+ a b)
+                  the-empty-environment))
+
+(compound-procedure? procedure-exp)
+(procedure-parameters procedure-exp)
+(procedure-body procedure-exp)
+(procedure-environment procedure-exp)
+
+(define test-env
+  (extend-environment
+   '(v1 v2 v3 v4)
+   '(1 2 3 4)
+   the-empty-environment))
+
+(lookup-variable-value 'v1 test-env)
+(define-variable! 'v5 5 test-env)
+(set-variable-value! 'v1 11 test-env)
+(enclosing-environment test-env)
+(first-frame test-env)
+
+(define test-frame (make-frame '(v1 v2 v3) '(1 2 3)))
+(frame-variables test-frame)
+(frame-values test-frame)
+(add-binding-to-frame! 'v4 4 test-frame)
+
+; 4.1.4
 primitive-procedures
 (primitive-procedure-names)
 (primitive-procedure-objects)
