@@ -6,3 +6,8 @@
 (test-assert (vector? v))
 (test-eqv 99 (vector-ref v 2))
 (test-end "vec-test")
+
+(test-begin "test-read-eval-string")
+(test-equal 7 (test-read-eval-string "(+ 3 4)"))
+(test-error (test-read-eval-string "(+ 3))"))
+(test-end "test-read-eval-string")
