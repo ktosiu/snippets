@@ -9,7 +9,14 @@
   (list (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
-        (list 'null? null?)))
+        (list 'null? null?)
+        (list '+ +)
+        (list '- -)
+        (list '* *)
+        (list '/ /)
+        (list '< <)
+        (list '> >)
+        (list '= =)))
 
 (define (primitive-procedure-names)
   (map car
@@ -62,16 +69,15 @@
           (frame-values frame))))
 
 (define (setup-environment)
-  (let ((inital-env
+  (let ((initial-env
          (extend-environment (primitive-procedure-names)
                              (primitive-procedure-objects)
                              the-empty-environment)))
-    (define-variable! 'true #t inital-env)
-    (define-variable! 'false #f inital-env)
-    inital-env))
+    (define-variable! 'true #t initial-env)
+    (define-variable! 'false #f initial-env)
+    initial-env))
 
-;(define the-global-environment (setup-environment))
-(define the-global-environment '())
+(define the-global-environment (setup-environment))
 
 (define (primitive-procedure? proc)
   (tagged-list? proc 'primitive))
@@ -131,8 +137,8 @@
 
 (define (cond-actions clause) (cdr clause))
 
-(define (cond-predicate clauses)
-  (car clauses))
+(define (cond-predicate clause)
+  (car clause))
 
 (define (cond-else-clause? clause)
   (eq? (cond-predicate clause) 'else))
@@ -295,6 +301,28 @@
         (else
          (error "Unknown procedure type -- APPLY" procedure))))
 
+(define (and? exp)
+  (tagged-list? exp 'and))
+
+(define (eval-and exp env)
+  (define (iter remaining result)
+    (cond ((null? remaining) result)
+          ((false? result) #f)
+          (else (iter (cdr remaining)
+                      (eval (car remaining) env)))))
+  (iter (cdr exp) #t))
+
+(define (or? exp)
+  (tagged-list? exp 'or))
+
+(define (eval-or exp env)
+  (define (iter remaining result)
+    (cond ((null? remaining) #f)
+          ((true? result) #t)
+          (else (iter (cdr remaining)
+                      (eval (car remaining) env)))))
+  (iter (cdr exp) #f))
+
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
@@ -309,6 +337,8 @@
         ((begin? exp)
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
+        ((and? exp) (eval-and exp env))
+        ((or? exp) (eval-or exp env))
         ((application? exp)
          (apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
@@ -316,17 +346,6 @@
          (error "Unknown expression type -- EVAL" exp))))
 
 ;; Meta-circuar implementation
-
-;; Interpret helper
-(define (interpret exp)
-  (eval exp the-global-environment))
-
-;;
-;(interpret '(define x 14))
-;(interpret
-; '(define (average x y)
-;    (/ (+ x y) 2)))
-;(interpret '(average x 6))
 
 ;; Driver loops goes here
 (define input-prompt ";;; Meta-Eval input:")
@@ -360,4 +379,4 @@
       (user-print output)))
   (driver-loop))
 
-;(driver-loop)
+(driver-loop)

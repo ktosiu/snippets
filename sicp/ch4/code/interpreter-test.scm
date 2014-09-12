@@ -1,26 +1,41 @@
 (load "./interpreter.scm")
-(load "../../common/srfi-64-port.scm")
-(use-modules (srfi srfi-64))
-(test-begin "interpreter-test")
+;(load "../../common/srfi-64-port.scm")
+;(use-modules (srfi srfi-64))
+;(test-begin "interpreter-test")
+
+; General test
+(define (interpret exp)
+  (eval exp the-global-environment))
+
+(interpret
+ '(define (make-adder-func x)
+    (lambda (y) (+ x y))))
 
 ; 4.1.1
 (define the-env (cons (make-frame '() '()) '()))
 (eval '(define a 1) the-env)
-(eval 'a the-env)
-
-(apply (make-procedure '(a b) '(a) the-env) '(2 1))
-
-(list-of-values '(a) the-env)
-(eval-if '(if #t 1 2) the-env)
 (eval-sequence '((define b 2)
                  (define c 3))
                the-env)
 (eval-assignment '(set! a 11) the-env)
 (eval-definition '(define a 1) the-env)
+(eval 'a the-env)
+(eval 1 the-env)
+(eval "string" the-env)
+(eval '(quote (e d f)) the-env)
+(eval '(set! a 100) the-env)
+(eval '(if #t "true" "false") the-env)
+(eval '(lambda (a) (cons a a)) the-env)
+(eval '(begin (set! a 200) (set! b 300)) the-env)
+
+;(apply (make-procedure '(a b) '(a) the-env) '(2 1))
+
+(list-of-values '(a) the-env)
+(eval-if '(if #t 1 2) the-env)
 
 ; 4.1.2
-(test-assert (self-evaluating? 1))
-(test-assert (self-evaluating? 'a))
+(self-evaluating? 1)
+(not (self-evaluating? 'a))
 (self-evaluating? "adf")
 
 (variable? 1)
@@ -72,9 +87,9 @@
 (no-operands? (operands '(a)))
 
 (define cond-exp
-  '(cond ((< a 0) -1)
-         ((> a 0) 1)
-         (else 0)))
+  '(cond ((= a 4) 6)
+         ((= b 4) (+ 6 7 a))
+         (else 25)))
 (cond? cond-exp)
 (cond-clauses cond-exp)
 (cond->if cond-exp)
@@ -101,6 +116,12 @@
    '(1 2 3 4)
    the-empty-environment))
 
+(define extended-env
+  (extend-environment
+   '(a b c)
+   '(1 2 3)
+   test-env))
+
 (lookup-variable-value 'v1 test-env)
 (define-variable! 'v5 5 test-env)
 (set-variable-value! 'v1 11 test-env)
@@ -120,4 +141,7 @@ primitive-procedures
 (primitive-procedure? (list 'primitive '(cons a b)))
 (primitive-implementation (list 'primitive '(cons a b)))
 
-(test-end "interpreter-test")
+;(test-end "interpreter-test")
+
+; Test Exercise 4.4
+(eval '(and (> 1 0) (> 2 1)) the-global-environment)
