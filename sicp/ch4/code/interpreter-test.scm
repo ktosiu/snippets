@@ -1,4 +1,8 @@
 (load "./interpreter.scm")
+(load "../../common/srfi-64-port.scm")
+(use-modules (srfi srfi-64))
+(test-begin "interpreter-test")
+
 ; 4.1.1
 (define the-env (cons (make-frame '() '()) '()))
 (eval '(define a 1) the-env)
@@ -6,7 +10,7 @@
 
 (apply (make-procedure '(a b) '(a) the-env) '(2 1))
 
-(list-of-values '(a b c) the-env)
+(list-of-values '(a) the-env)
 (eval-if '(if #t 1 2) the-env)
 (eval-sequence '((define b 2)
                  (define c 3))
@@ -15,8 +19,8 @@
 (eval-definition '(define a 1) the-env)
 
 ; 4.1.2
-(self-evaluating? 1)
-(self-evaluating? 'a)
+(test-assert (self-evaluating? 1))
+(test-assert (self-evaluating? 'a))
 (self-evaluating? "adf")
 
 (variable? 1)
@@ -115,3 +119,5 @@ primitive-procedures
 
 (primitive-procedure? (list 'primitive '(cons a b)))
 (primitive-implementation (list 'primitive '(cons a b)))
+
+(test-end "interpreter-test")
