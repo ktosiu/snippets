@@ -323,6 +323,19 @@
                       (eval (car remaining) env)))))
   (iter (cdr exp) #f))
 
+(define (let? exp)
+  (tagged-list? exp 'let))
+
+(define (let->combination exp)
+  (let ((var-args-pairs (cadr exp))
+        (body (cddr exp)))
+    (if (null? var-args-pairs)
+        (error "Empty let experession")
+        (let ((vars (map car var-args-pairs))
+              (args (map cadr var-args-pairs)))
+          (cons (make-lambda vars body)
+                args)))))
+
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
@@ -339,6 +352,7 @@
         ((cond? exp) (eval (cond->if exp) env))
         ((and? exp) (eval-and exp env))
         ((or? exp) (eval-or exp env))
+        ((let? exp) (eval (let->combination exp) env))
         ((application? exp)
          (apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))

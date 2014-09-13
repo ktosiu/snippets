@@ -1,0 +1,12 @@
+(define (let? exp)
+  (tagged-list? exp 'let))
+
+(define (let->combination exp)
+  (let ((var-args-pairs (cadr exp))
+        (body (cddr exp)))
+    (if (null? var-args-pairs)
+        (error "Empty let experession")
+        (let ((vars (map car var-args-pairs))
+              (args (map cadr var-args-pairs)))
+          (cons (make-lambda vars body)
+                args)))))
