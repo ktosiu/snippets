@@ -336,6 +336,20 @@
           (cons (make-lambda vars body)
                 args)))))
 
+(define (let*? exp)
+  (tagged-list? exp 'let*))
+
+(define (let*->nested-let exp)
+  (let ((let*-body (caddr exp))
+        (let*-binds (cadr exp)))
+    (define (build-let binds)
+      (if (null? binds)
+          let*-body
+          (list 'let
+                (list (car binds))
+                (build-let (cdr binds)))))
+    (build-let let*-binds)))
+
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
@@ -353,6 +367,7 @@
         ((and? exp) (eval-and exp env))
         ((or? exp) (eval-or exp env))
         ((let? exp) (eval (let->combination exp) env))
+        ((let*? exp) (eval (let*->nested-let exp) env))
         ((application? exp)
          (apply (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
@@ -393,4 +408,4 @@
       (user-print output)))
   (driver-loop))
 
-(driver-loop)
+;(driver-loop)

@@ -155,3 +155,13 @@ primitive-procedures
 
 (let->combination test-let-exp)
 (eval test-let-exp the-global-environment)
+
+; Test exercise 4.7
+(define test-let*-exp
+  '(let* ((x 3)
+          (y (+ x 2))
+          (z (+ x y 5)))
+     (* x z)))
+(caddr test-let*-exp)
+(cadr test-let*-exp)
+(let*->nested-let test-let*-exp)
