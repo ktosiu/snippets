@@ -169,7 +169,7 @@
 ;(test-end "interpreter-test")
 
 ; Test Exercise 4.4
-(eval '(and (> 1 0) (> 2 1)) the-global-environment)
+;(eval '(and (> 1 0) (> 2 1)) the-global-environment)
 
 ; Test exercise 4.6
 (define test-let-exp
@@ -179,7 +179,7 @@
     (+ v1 v2 v3)))
 
 (let->combination test-let-exp)
-(eval test-let-exp the-global-environment)
+;(eval test-let-exp the-global-environment)
 
 ; Test exercise 4.7
 (define test-let*-exp
