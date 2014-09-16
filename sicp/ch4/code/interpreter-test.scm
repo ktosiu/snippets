@@ -4,13 +4,6 @@
 ;(test-begin "interpreter-test")
 
 ; General test
-(define (interpret exp)
-  (eval exp the-global-environment))
-
-(interpret
- '(define (make-adder-func x)
-    (lambda (y) (+ x y))))
-
 ; 4.1.1
 (define the-env (cons (make-frame '() '()) '()))
 (eval '(define a 1) the-env)
@@ -134,7 +127,39 @@
 (add-binding-to-frame! 'v4 4 test-frame)
 
 ; 4.1.4
-primitive-procedures
+(load "./interpreter.scm")
+(define primitive-procedures
+  (list (list 'car car)
+        (list 'cdr cdr)
+        (list 'cons cons)
+        (list 'null? null?)
+        (list '+ +)
+        (list '- -)
+        (list '* *)
+        (list '/ /)
+        (list '< <)
+        (list '> >)
+        (list '= =)))
+
+(define (primitive-procedure-names)
+  (map car
+       primitive-procedures))
+
+(define (primitive-procedure-objects)
+  (map (lambda (proc) (list 'primitive (cadr proc)))
+       primitive-procedures))
+
+(define (setup-environment)
+  (let ((initial-env
+         (extend-environment (primitive-procedure-names)
+                             (primitive-procedure-objects)
+                             the-empty-environment)))
+    (define-variable! 'true #t initial-env)
+    (define-variable! 'false #f initial-env)
+    initial-env))
+
+(define the-global-environment (setup-environment))
+
 (primitive-procedure-names)
 (primitive-procedure-objects)
 
