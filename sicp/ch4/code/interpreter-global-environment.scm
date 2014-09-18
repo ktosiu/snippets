@@ -1,9 +1,10 @@
-(load "interpreter-analyze.scm")
+(load "interpreter-amb.scm")
 (define primitive-procedures
   (list (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)
+        (list 'list list)
         (list '+ +)
         (list '- -)
         (list '* *)
