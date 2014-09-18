@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css"
+      href="http://gnosis.cx/dW/programming/dW.css" ?>
+<dw-document xmlns:dw="http://www.ibm.com/developerWorks/">
+  <title>The Twisted Matrix Framework</title>
+  <author name="David Mertz, Ph.D.">
+    <bio>David thinks it's turtles all the way down...</bio>
+  </author>
+  <docbody>
+    <p>
+      Sorting through Twisted Matrix is reminiscent of the old story
+      about blind men and elephants. Twisted Matrix has many
+      capabilities within it, and it takes a bit of a gestalt switch
+      to <i>get</i> a good sense of why they are all there.
+    </p>
+  </docbody>
+</dw-document>
