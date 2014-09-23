@@ -9,5 +9,5 @@
       b
       (plus1 (dec a ) (inc b))))
 
-(plus 8 7)
-(plus1 9 8)
+;(plus1 8 7)
+;(plus1 9 8)

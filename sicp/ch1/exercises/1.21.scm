@@ -1,3 +1,4 @@
+(define (square x) (* x x))
 (define (divides? a b) (= (remainder b a) 0))
 
 (define (find-divisor n test-divisor)
@@ -7,4 +8,4 @@
 
 (define (smallest-divisor n) (find-divisor n 2))
 
-(smallest-divisor 1999)
+(smallest-divisor 19999)

@@ -12,4 +12,4 @@
       guess
       (cube-iter next-guess x)))
 
-(cube-iter 1.0 9)
+(cube-iter 1.0 8)

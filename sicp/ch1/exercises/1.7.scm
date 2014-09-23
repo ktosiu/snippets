@@ -15,4 +15,5 @@
       guess
       (sqrt-iter next-guess x)))
 
-(sqrt-iter 1.0 5)
+(define (sqrt x)
+  (sqrt-iter 1.0 x))

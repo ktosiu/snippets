@@ -15,5 +15,4 @@
 
 (define (cube x) (* x x x))
 
-(simpson-integral sin 0 1 100)
-(simpson-integral cube 0 1 100)
+(simpson-integral cube 0 1 1000)
