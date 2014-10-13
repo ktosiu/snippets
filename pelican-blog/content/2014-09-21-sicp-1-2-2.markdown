@@ -1,0 +1,173 @@
+Title: sicp 1.2 (2)
+Slug: sicp-1-2-2
+Date: 2014-09-21 20:37:33
+Modified: 2014-09-21 20:37:33
+Category: blog
+Tags: sicp
+
+#导读
+
+求解最大公约数的“欧几里得算法”非常适合通过递归过程描述。基于最大公约数算法我们可以进而实现素数检测的算法。本书介绍了一种基于概率的素数检测算法。素数检测算法在密码学方面具有相当的实用价值。目前广泛采用的非对称加密算法RSA就是基于大素数分解的。
+
+#习题解答
+
+* 练习1.20
+
+由于scheme语言不是normal order的。我么只能通过手工通过代换模型展开计算(gcd 206 40)的计算过程。
+
+我们可以trace打印出applicative order模式下计算(gcd 206 40)的计算过程。
+
+``` Scheme
+trace: (gcd 206 40)
+trace: (gcd 40 6)
+trace: (gcd 6 4)
+trace: (gcd 4 2)
+trace: (gcd 2 0)
+trace: 2
+```
+
+* 练习1.21
+
+``` Scheme
+(smallest-divisor 199)
+=> 199
+(smallest-divisor 1999)
+=> 1999
+(smallest-divisor 19999)
+=> 7
+```
+
+* 练习1.22
+
+``` Scheme
+(define (search-for-primes a  b)
+	(cond ((> a b) 'end)
+		  ((odd? a)
+		   (begin (timed-prime-test a)
+		          (search-for-primes (+ a 1) b)))
+		  (else
+		   (search-for-primes (+ a 1) b))
+```
+
+* 练习1.23
+
+``` Scheme
+(define (divides? a b) (= (remainder b a) 0))
+
+(define (next n)
+  (if (= n 2)
+      3
+      (+ n 2)))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (next test-divisor)))))
+
+(define (smallest-divisor n) (find-divisor n 2))
+```
+
+* 练习1.25
+
+(expmod base exp m)计算的是base取exp次幂，然后再对m求模。Alyssa建议的算法是先求出base的exp次幂，然后求模。这种方法的正确性取决于scheme解释器的实现方式。如果scheme解释器没有实现大整数处理，那么就有可能导致整数溢出，从而计算出错误的结果。就算是scheme解释器实现了大整数处理，这种方法也会比作者提供的算法效率低。
+
+* 练习1.26
+
+Louis Reasoner的实现:
+
+``` Scheme
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (* (expmod base (/ exp 2) m)
+                       (expmod base (/ exp 2) m))
+                    m))
+        (else
+         (remainder (* base (expmod base (- exp 1) m))
+                    m))))
+
+```
+
+可以通过trace打印出Louis Reasoner实现的expmod计算(expmod 3 7 5)的过程。
+
+``` Scheme
+trace: (expmod 3 7 5)
+trace: |  (even? 7)
+trace: |  #f
+trace: |  (expmod 3 6 5)
+trace: |  |  (even? 6)
+trace: |  |  #t
+trace: |  |  (expmod 3 3 5)
+trace: |  |  |  (even? 3)
+trace: |  |  |  #f
+trace: |  |  |  (expmod 3 2 5)
+trace: |  |  |  |  (even? 2)
+trace: |  |  |  |  #t
+trace: |  |  |  |  (expmod 3 1 5)
+trace: |  |  |  |  |  (even? 1)
+trace: |  |  |  |  |  #f
+trace: |  |  |  |  |  (expmod 3 0 5)
+trace: |  |  |  |  |  1
+trace: |  |  |  |  3
+trace: |  |  |  |  (expmod 3 1 5)
+trace: |  |  |  |  |  (even? 1)
+trace: |  |  |  |  |  #f
+trace: |  |  |  |  |  (expmod 3 0 5)
+trace: |  |  |  |  |  1
+trace: |  |  |  |  3
+trace: |  |  |  4
+trace: |  |  2
+trace: |  |  (expmod 3 3 5)
+trace: |  |  |  (even? 3)
+trace: |  |  |  #f
+trace: |  |  |  (expmod 3 2 5)
+trace: |  |  |  |  (even? 2)
+trace: |  |  |  |  #t
+trace: |  |  |  |  (expmod 3 1 5)
+trace: |  |  |  |  |  (even? 1)
+trace: |  |  |  |  |  #f
+trace: |  |  |  |  |  (expmod 3 0 5)
+trace: |  |  |  |  |  1
+trace: |  |  |  |  3
+trace: |  |  |  |  (expmod 3 1 5)
+trace: |  |  |  |  |  (even? 1)
+trace: |  |  |  |  |  #f
+trace: |  |  |  |  |  (expmod 3 0 5)
+trace: |  |  |  |  |  1
+trace: |  |  |  |  3
+trace: |  |  |  4
+trace: |  |  2
+trace: |  4
+trace: 2
+```
+
+根据sicp作者在本节给出的实现计算(expmod 3 7 5)的过程。
+
+``` Scheme
+trace: (expmod 3 7 5)
+trace: |  (even? 7)
+trace: |  #f
+trace: |  (expmod 3 6 5)
+trace: |  |  (even? 6)
+trace: |  |  #t
+trace: |  |  (expmod 3 3 5)
+trace: |  |  |  (even? 3)
+trace: |  |  |  #f
+trace: |  |  |  (expmod 3 2 5)
+trace: |  |  |  |  (even? 2)
+trace: |  |  |  |  #t
+trace: |  |  |  |  (expmod 3 1 5)
+trace: |  |  |  |  |  (even? 1)
+trace: |  |  |  |  |  #f
+trace: |  |  |  |  |  (expmod 3 0 5)
+trace: |  |  |  |  |  1
+trace: |  |  |  |  3
+trace: |  |  |  |  (square 3)
+trace: |  |  |  |  9
+trace: |  |  |  4
+trace: |  |  2
+trace: |  |  (square 2)
+trace: |  |  4
+trace: |  4
+trace: 2
+```

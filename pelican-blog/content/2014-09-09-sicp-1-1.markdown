@@ -1,0 +1,93 @@
+Title: sicp 1.1
+Slug: sicp-1-1
+Date: 2014-09-09 21:00:21
+Modified: 2014-09-09 21:00:21
+Category: blog
+Tags: sicp
+
+#导读
+
+Scheme语言是一种lisp方言。Scheme语言的特点就是语法非常简单，一般通过短期的学习都可以掌握基本语法和概念。相比较而言，目前的主流编程语言如C/C++, Java, Javascript都需要一本专著来介绍语法和基本概念。其实我们学习程序语言的目的无非是希望能够表达某种设计，通过语言编写出能够高效运行的程序。Scheme语言能让我们越过枯燥的语法学习阶段，直接开始编写算法和数据结构。随着本书的内容的推进，许多新的抽象和概念逐渐浮现，有时候我们需要借助很多在其他编程语言里已经存在功能来帮助我们更好地表达，怎么办？很简单，我们用Scheme语言从头实现。通过这种方式，不但能让我们更深入理解一些概念如面向对象、闭包、模式匹配等，还能让我们在实现这些功能的同时加深对Scheme语言的理解。真是一举两得！
+
+1.1小节主要介绍了Scheme语言的基本元素。我不会重复书里面已经介绍的内容。
+
+本小节需要读者理解的概念:
+
+* 代换模型
+* 求值顺序(applicative order / normal order)
+
+在此有必要介绍一下当前比较流行的Scheme版本。我个人比较推荐guile。guile是gnu/linux上的标配，所以比较容易获取。IDE的话推荐使用emacs，对于初学者我建议采用prelude配置，prelude已经预设配置好了scheme的开发环境。还要注意一点就是书上使用的Scheme的版本相对较老。所以在做练习的时候要注意对书上的代码做一些微调（如true改为#t, false改为#f, nil改为'()等）。详情可以参阅guile的帮助文档。
+
+#习题解答
+
+* 练习1.2
+
+``` Scheme
+(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
+   (* 3 (- 6 2) (-2 7)))
+```
+
+* 练习1.3
+
+``` Scheme
+(define (sum-of-two-larger-nums a b c)
+  (cond ((and (< a b) (a c)) (sum-of-squares b c))
+        (else (sum-of-squares a (max b c)))))
+```
+
+* 练习1.4
+
+用自然语言描述该过程所表达的意思是：当b>0时执行a + b，当b<=0时执行a-b。其实就是a+|b|。
+
+* 练习1.5
+
+本题考察的是对求值顺序的理解。其中过程p定义为一个无穷递归的过程。如果解释器采用的是applicative order，那么无论if条件判断结果如何，解释器都会试图解释过程p，结果是stack over flow。如果解释器采用的是normal order，那么当if条件判断出该分支不需要求值时，解释器不会对该表达式求值。
+
+* 练习1.6
+
+解答本题需要理解"Special Form"和"Procedure"的区别。在Scheme语言中，所有的procedure都有一致的求值规则，special form则有自己特别的求值规则。按照Scheme语言的表达式求值规则，求值一个表达式，需要先求值其子表达式。对于if的求值规则是先求值判别式，如果为true则求值then子句，如果为false则求值else子句。如果按照题目中所说，将if实现为一个procedure，由于这是一个procedure，无论判别式值是什么，解释器都会求值then子句和else子句，该递归函数会进入一个死循环。
+
+* 练习1.7
+
+``` Scheme
+(define (square x) (* x x))
+
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (improve guess x)
+  (average guess (/ x guess)))
+
+(define (good-enough? x next-guess)
+  (< (abs (- x next-guess)) 0.001))
+
+(define (sqrt-iter guess x)
+  (define next-guess (improve guess x))
+  (if (good-enough? guess next-guess)
+      guess
+      (sqrt-iter next-guess x)))
+
+(define (sqrt x)
+  (sqrt-iter 1.0 x))
+```
+
+* 练习1.8
+
+``` Scheme
+(define (square x) (* x x))
+
+(define (improve x y)
+  (/ (+ (/ x (square y)) (* 2 y)) 3))
+
+(define (good-enough? current-guess next-guess)
+  (< (abs (- current-guess next-guess)) 0.001))
+
+(define (cube-iter guess x)
+  (define next-guess (improve x guess))
+  (if (good-enough? guess next-guess)
+      guess
+      (cube-iter next-guess x)))
+
+(define (cube-root x)
+  (cube-iter 1.0 x))
+```
