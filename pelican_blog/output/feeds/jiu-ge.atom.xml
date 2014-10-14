@@ -1,0 +1,961 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>九哥的部落</title><link href="/" rel="alternate"></link><link href="/feeds%5Cjiu-ge.atom.xml" rel="self"></link><id>/</id><updated>2014-10-09T23:07:31+08:00</updated><entry><title>例解C++测试驱动开发和单元测试</title><link href="/blog/2014/10/09/cpp-tdd-unittest/" rel="alternate"></link><updated>2014-10-09T23:07:31+08:00</updated><author><name>九哥</name></author><id>tag:,2014-10-09:blog/2014/10/09/cpp-tdd-unittest/</id><summary type="html">&lt;h1&gt;声明&lt;/h1&gt;
+&lt;p&gt;本文翻译自Alex Ott的博客：&lt;a href="http://alexott.net/en/cpp/CppTestingIntro.html"&gt;Test-driven development and unit testing with examples in&amp;nbsp;C++&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;未经同意，请勿转载。&lt;/p&gt;
+&lt;h1&gt;测试驱动开发基础&lt;/h1&gt;
+&lt;h2&gt;测试驱动开发&lt;/h2&gt;
+&lt;p&gt;测试驱动开发(&lt;a href="http://en.wikipedia.org/wiki/Test-driven_development"&gt;&lt;span class="caps"&gt;TDD&lt;/span&gt;&lt;/a&gt;)是一种软件开发的流程。它依赖短开发周期的多次迭代：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;需要改进已有功能或者开发新功能时，开发人员首先编写测试案例（此刻测试案例运行失败）&lt;/li&gt;
+&lt;li&gt;然后实现代码使测试案例运行通过&lt;/li&gt;
+&lt;li&gt;最后重构代码使其符合标准&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;测试驱动开发与&lt;a href="http://en.wikipedia.org/wiki/Extreme_programming"&gt;极限编程&lt;/a&gt;中的“测试先行(test-first)”概念相关，也经常与“敏捷开发”联系起来。单就测试驱动开发来说，有其&lt;a href="http://en.wikipedia.org/wiki/Test-driven_development#Benefits"&gt;优点&lt;/a&gt;，也有&lt;a href="http://en.wikipedia.org/wiki/Test-driven_development#Vulnerabilities"&gt;缺点&lt;/a&gt;。优缺点姑且不论，我们能在实际项目中采用这种方法提升代码质量。&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;TDD&lt;/span&gt;工作流可以描述为如下步骤的循环(参考下图)：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;确定实现哪些功能&lt;/li&gt;
+&lt;li&gt;为每个功能添加单元测试案例&lt;/li&gt;
+&lt;li&gt;编译运行测试案例，检查是否有错误&lt;/li&gt;
+&lt;li&gt;实现代码以使测试通过&lt;/li&gt;
+&lt;li&gt;重构&lt;/li&gt;
+&lt;li&gt;重复运行测试，如果测试失败，修改代码&lt;/li&gt;
+&lt;li&gt;提交修改&lt;/li&gt;
+&lt;li&gt;实现下一个功能（重复以上步骤）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt="测试驱动开发流程" src="/images/TDD.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;单元测试及框架&lt;/h2&gt;
+&lt;p&gt;众所周知，软件测试的分类如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;单元测试&lt;/li&gt;
+&lt;li&gt;集成测试&lt;/li&gt;
+&lt;li&gt;回归测试&lt;/li&gt;
+&lt;li&gt;验收测试&lt;/li&gt;
+&lt;li&gt;性能测试&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文主要讨论单元测试，但是某些技术也适用于其他测试类型。&lt;/p&gt;
+&lt;p&gt;单元测试用于测试代码单元以确保这些代码单元正常工作。代码单元是应用程序的最小可测试部分。在过程式语言中，代码单元可能是一个函数或者过程。一般来说，单元测试由开发人员完成,&amp;nbsp;其目标是隔离应用程序的各个部分，确保各个部分正确工作。单元测试可以看作是所测试代码段所必须符合的严格的书面规格。&lt;/p&gt;
+&lt;p&gt;单元测试有以下优点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;管理变化，应用单元测试，程序员在项目后期重构代码也能保证代码的正确性&lt;/li&gt;
+&lt;li&gt;简化集成，单元测试能够降低代码单元内部的不确定性，可以用在自底向上测试方法中。先测试程序的一部分，然后整体测试代码，这样使集成测试更加容易&lt;/li&gt;
+&lt;li&gt;单元测试可以作为系统的活文档，开发人员可以通过查看单元测试代码了解程序代码的&lt;span class="caps"&gt;API&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;单元测试框架&lt;/h3&gt;
+&lt;p&gt;通常采用单元测试框架来简化单元测试。单元测试框架应当提供如下功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;新手能够简单明了地编写单元测试&lt;/li&gt;
+&lt;li&gt;测试框架允许老手编写复杂的测试&lt;/li&gt;
+&lt;li&gt;测试模块可以包含多个小的测试案例，并允许将它们组织成测试套件&lt;/li&gt;
+&lt;li&gt;在开发初期用户也许需要详尽的错误信息，在回归测试阶段用户只想知道是否有测试案例失败&lt;/li&gt;
+&lt;li&gt;对于小测试模块，执行时间和编译时间要能够匹配。测试者不希望很小的测试案例花大量时间编译&lt;/li&gt;
+&lt;li&gt;对于复杂的运行时间长的测试案例，测试者希望能看到测试进展情况&lt;/li&gt;
+&lt;li&gt;测试案例之间能够独立执行，互不影响。比如，某测试案例崩溃不会影响其它测试案例&lt;/li&gt;
+&lt;li&gt;简单的测试不需依赖外部库&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;现在几乎所有编程语言都有不只一个单元测试框架。最广泛使用的是&lt;a href="http://en.wikipedia.org/wiki/XUnit"&gt;xUnit&lt;/a&gt;单元测试框架系列(JUnit, CppUnit,&amp;nbsp;NUnit&amp;#8230;.)。xUnit单元测试框架系列易于使用，它们的功能和架构类似。xUnit单元测试框架由以下部分组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;断言，检查单个条件&lt;/li&gt;
+&lt;li&gt;测试案例，组合多个断言，测试一组功能&lt;/li&gt;
+&lt;li&gt;测试套件，组合多个逻辑上互相关联的测试案例&lt;/li&gt;
+&lt;li&gt;Fixture，配置测试案例所需的数据和状态，并在执行完成后清理。这些框架支持测试案例级的Fixture、测试套件级的Fixture、以及全局的Fixture&lt;/li&gt;
+&lt;li&gt;还有测试执行监控程序，用来控制测试案例的执行和收集测试案例的失败数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;如何组织单元测试案例&lt;/h3&gt;
+&lt;p&gt;一般来说，应当为所有公开暴露的函数编写单元测试，包括没有声明为static的自由函数、类的所有公有成员函数（包括公有构造函数和重载的操作符）。单元测试力求覆盖函数中的主要路径，例如不同的条件分支和循环等等。还要处理正常情况和边界情况、提供正确数据和随机数据，进而可以测试程序的错误处理逻辑。&lt;a href="http://geosoft.no/development/unittesting.html"&gt;这些文章&lt;/a&gt;提供更多关于如何组织单元测试的建议。&lt;/p&gt;
+&lt;p&gt;测试案例通常按照某些标准组合成测试套件：共有的功能、相同功能的不同案例、共同的Fixture等等。Fixture负责配置和清除测试运行所需的数据，以使测试案例更加简短并且易于理解。&lt;/p&gt;
+&lt;p&gt;推荐采用如下方法实现测试案例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个测试案例只测试一个功能&lt;/li&gt;
+&lt;li&gt;简短的测试案例&lt;/li&gt;
+&lt;li&gt;测试能快速执行，这样才可能经常运行测试&lt;/li&gt;
+&lt;li&gt;测试之间互不干扰。失败的测试不能影响其它的测试&lt;/li&gt;
+&lt;li&gt;测试不能依赖它们的执行顺序&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;有些观点认为，把所有测试揉在一个大函数中能够提升代码可读性，使代码更精炼。对于这种观点有以下反对意见（在&lt;a href="http://www.boost.org/doc/libs/1_45_0/libs/test/doc/html/utf/user-guide/test-organization.html"&gt;这些文档&lt;/a&gt;中有所提及）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果发生严重问题，或者在某些检查中抛出了异常，之后的测试案例无法被执行&lt;/li&gt;
+&lt;li&gt;无法只检查测试单元的某个子系统&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;代码可测试性还依赖于代码的设计。有时编写单元测试非常困难，因为需要测试的功能要么隐藏在复杂的接口后面，要么有很多外部依赖，因此正确组织好测试也非常困难。以下是一些关于如何编写易于单元测试的代码的建议：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;代码应该松散耦合，类和函数的外部依赖应该尽量少；&lt;/li&gt;
+&lt;li&gt;避免在类或者函数内部创建复杂类的实例。此时，这些类的实例通过指针和引用传入更好，这样就可以利用Mock来测试你的代码了；&lt;/li&gt;
+&lt;li&gt;尽力减少类暴露的公有&lt;span class="caps"&gt;API&lt;/span&gt;，编写不同的类完成不同的任务比编写一个类完成所有任务要好。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在此&lt;a href="http://googletesting.blogspot.com/2008/08/by-miko-hevery-so-you-decided-to.html"&gt;博客&lt;/a&gt;中可以找到更多关于编写可测试代码的建议。&lt;/p&gt;
+&lt;h2&gt;Mocking&lt;/h2&gt;
+&lt;p&gt;单元测试中，Mock对象能模拟复杂、真实的对象的行为，在不可能将真实对象集成到单元测试的情况下非常有用。如果对象有下列一个特征，用Mock对象代替就非常有用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;产生不确定的结果（如当前时间或者温度）&lt;/li&gt;
+&lt;li&gt;包含很难重现的状态（如网络错误）&lt;/li&gt;
+&lt;li&gt;对象暂时还不存在，或者行为还会变化&lt;/li&gt;
+&lt;li&gt;包含只用来测试的信息和方法&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Mock对象与其模仿的真实对象的接口是一致的，这样客户代码可以不用关心它使用的是一个真实对象还是一个Mock对象。许多Mock框架允许程序员指定Mock对象调用的方法和调用次序，及其传递的参数和返回值。从而如网络socket这样复杂对象的行为可以由Mock对象来模拟，程序员可以观察被测试对象对其所处于的各种状态的的回应是否正常。&lt;/p&gt;
+&lt;p&gt;典型的工作流如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;掌握被测试类的接口，这样才能同时使用Mock对象和真实对象&lt;/li&gt;
+&lt;li&gt;用框架创建Mock类（也可以自己编写Mock类，但是一般不推荐）&lt;/li&gt;
+&lt;li&gt;编写用Mock对象测试的目标代码&lt;/li&gt;
+&lt;li&gt;创建测试案例并采用Mock对象代替真实对象。在测试案例中采取如下步骤：&lt;/li&gt;
+&lt;li&gt;创建Mock类的实例&lt;/li&gt;
+&lt;li&gt;设定Mock对象的行为和期望：哪些方法该调用，哪些方法不该调用，方法调用该返回什么数据，等等&lt;/li&gt;
+&lt;li&gt;运行代码（这些代码使用了Mock对象）&lt;/li&gt;
+&lt;li&gt;获取代码运行的结果并检查是否与期望的返回值一致，通常由Mock框架在销毁Mock对象时完成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="http://alexott.net/en/cpp/CppTestingIntro.html#gmock-example"&gt;这里&lt;/a&gt;可以找到使用Google C++&amp;nbsp;Mocking框架的例子。&lt;/p&gt;
+&lt;h1&gt;C++单元测试&lt;/h1&gt;
+&lt;p&gt;本节介绍C++中的单元测试和Mocking。&lt;/p&gt;
+&lt;h2&gt;C++单元测试及Boost.Test&lt;/h2&gt;
+&lt;p&gt;C++有很多&lt;a href="http://en.wikipedia.org/wiki/List_of_unit_testing_frameworks#C.2B.2B"&gt;单元测试框架&lt;/a&gt;。当前最广为使用的有Boost.Test和&lt;a href="https://code.google.com/p/googletest/"&gt;Google C++测试框架&lt;/a&gt;。它们的功能类似，由于作者在公司项目和个人项目中使用Boost.Test，因此本文只介绍Boost.Test。&lt;/p&gt;
+&lt;p&gt;Boost.Test有这些功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;初级用户和高级用户均适合使用&lt;/li&gt;
+&lt;li&gt;允许将测试案例组织成测试套件&lt;/li&gt;
+&lt;li&gt;测试案例可以自动注册也可以手动注册&lt;/li&gt;
+&lt;li&gt;采用参数化和类型化的测试案例测试不同的数据类型&lt;/li&gt;
+&lt;li&gt;Fixture（资源的初始化和清除）：测试案例夹具、测试套件夹具、全局夹具&lt;/li&gt;
+&lt;li&gt;大量的断言和检查：&lt;/li&gt;
+&lt;li&gt;异常（抛出或者没有抛出）&lt;/li&gt;
+&lt;li&gt;相等、不等、大于、小于等等&lt;/li&gt;
+&lt;li&gt;集合和比特位的相等测试&lt;/li&gt;
+&lt;li&gt;明确的失败和成功&lt;/li&gt;
+&lt;li&gt;浮点数比较，同时能够控制精度&lt;/li&gt;
+&lt;li&gt;不同的检查等级：warning, check,&amp;nbsp;require&lt;/li&gt;
+&lt;li&gt;功能丰富的执行控制逻辑&lt;/li&gt;
+&lt;li&gt;用户定义的main过程&lt;/li&gt;
+&lt;li&gt;描述哪些测试应该失败&lt;/li&gt;
+&lt;li&gt;测试结果输出为多种格式：文本、xml、&amp;#8230;&lt;/li&gt;
+&lt;li&gt;测试进度可视化&lt;/li&gt;
+&lt;li&gt;跨平台（支持所有平台，由Boost库支持）&lt;/li&gt;
+&lt;li&gt;Boost许可，运行不受限制地在任何地方使用&lt;/li&gt;
+&lt;li&gt;上佳的&lt;a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf.html"&gt;文档&lt;/a&gt;和&lt;a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/tutorials.html"&gt;教程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;唯一不足的是Boost.Test缺乏Mocking功能，尽管Google&amp;nbsp;Mock框架可以与它配合使用。&lt;/p&gt;
+&lt;p&gt;Boost.Test有不同的使用方法，依测试的复杂程度而定。用户可以可以自己编写测试函数然后手动注册以构建测试层次结构，也可以使用特殊的宏自动注册。&lt;/p&gt;
+&lt;p&gt;本文以“自动”测试为例，读者可以阅读&lt;a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/user-guide.html"&gt;Boost.Test的在线文档&lt;/a&gt;中关于手动测试注册的内容。&lt;/p&gt;
+&lt;p&gt;通常，由Boost.Test编写的测试代码由这些对象组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;测试案例，其中包含测试断言&lt;/li&gt;
+&lt;li&gt;测试套件，由测试案例组合而成&lt;/li&gt;
+&lt;li&gt;Fixture，负责配置和清除测试案例、测试套件、全局环境所需相关资源和数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/execution-monitor.html"&gt;Execution monitor&lt;/a&gt;执行所有单元测试：控制单元测试的执行、处理错误、收集已执行或失败的单元测试的统计数据。开发者可以通过命令行选项、环境变量、源代码控制Execution&amp;nbsp;monitor的行为。&lt;/p&gt;
+&lt;h2&gt;自动注册的测试案例&lt;/h2&gt;
+&lt;p&gt;对于简单单元测试，Boost.Test非常简单易用，只需包含必要的头文件，然后编写单元测试案例（或组织成测试套件），然后编译，将其与boost_unit_test_framework库链接（boost_unit_test_framework库包含负责配置和执行测试案例的main函数）。&lt;/p&gt;
+&lt;h2&gt;最简单的测试程序&lt;/h2&gt;
+&lt;p&gt;这是一个最简单的测试程序，定义了一个测试案例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#define BOOST_TEST_MODULE Simple testcases&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;boost/test/unit_test.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_AUTO_TEST_CASE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;simple_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;BOOST_CHECK_EQUAL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;第一行声明测试的名字，第二行包含必要的头文件，第4-6行定义测试案例（&lt;code&gt;BOOST_AUTO_TEST_CASE&lt;/code&gt;宏定义一个名字为&lt;code&gt;simple_test&lt;/code&gt;的测试案例，案例中包含一个断言：2+2=4，断言采用&lt;code&gt;BOOST_CHECK_EQUAL&lt;/code&gt;进行检查）。&lt;/p&gt;
+&lt;p&gt;编译执行该程序，屏幕上会打印如下内容（Boost.Test也可将结果输出为多种不同的格式，并且可以通过Execution&amp;nbsp;Monitor的选项控制结果的详略程度）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;Running&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="k"&gt;case&lt;/span&gt;&lt;span class="p"&gt;...&lt;/span&gt;
+
+&lt;span class="o"&gt;***&lt;/span&gt; &lt;span class="n"&gt;No&lt;/span&gt; &lt;span class="n"&gt;errors&lt;/span&gt; &lt;span class="n"&gt;detected&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果出现错误，测试框架会在屏幕上打印如下信息：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;Running&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="k"&gt;case&lt;/span&gt;&lt;span class="p"&gt;...&lt;/span&gt;
+&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cpp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;simple_test&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;check&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="n"&gt;failed&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="o"&gt;***&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;failure&lt;/span&gt; &lt;span class="n"&gt;detected&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;suite&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Simple testcases&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;以上错误信息指出了测试程序（Simple&amp;nbsp;testcases）中失败案例的个数，并且指出了错误发生的位置（test-simple.cpp的第5行），同时还显示了错误的附加信息（视所采用的检查函数而定）。&lt;/p&gt;
+&lt;h2&gt;使用测试套件&lt;/h2&gt;
+&lt;p&gt;当测试程序中包含大量的测试案例时，管理测试案例非常困难。Boost.Test支持将测试案例组合成测试套件，这样管理大量测试案例就非常容易了。测试套件同时还有其它优点，如为所有测试案例定义共同的Fixture，以及通过命令行选项选择执行部分测试案例。&lt;/p&gt;
+&lt;p&gt;测试套件的用法非常简单，只需将测试套件的所有测试案例写在&lt;code&gt;BOOST_AUTO_TEST_SUITE&lt;/code&gt;宏（以测试套件名为参数）和&lt;code&gt;BOOST_AUTO_TEST_SUITE_END&lt;/code&gt;宏之间即可：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#define BOOST_TEST_MODULE Simple testcases 2&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;boost/test/unit_test.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_AUTO_TEST_SUITE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;suite1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_AUTO_TEST_CASE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;BOOST_CHECK_EQUAL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_AUTO_TEST_CASE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;test2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;BOOST_CHECK_EQUAL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_AUTO_TEST_SUITE_END&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;编译、运行测试套件的方法与测试案例一致。&lt;/p&gt;
+&lt;h2&gt;单元测试工具及检查器&lt;/h2&gt;
+&lt;p&gt;Boost.Test提供大量的&lt;a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/testing-tools.html"&gt;测试工具/检查器&lt;/a&gt;。这些检查器几乎都有不同的检查级别（为了方便阅读，本文用&lt;code&gt;&amp;lt;level&amp;gt;&lt;/code&gt;来代表实际的级别）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;dl&gt;
+&lt;dt&gt;&lt;span class="caps"&gt;WARN&lt;/span&gt;&lt;/dt&gt;
+&lt;dd&gt;检查失败时生成警告消息，不增加失败案例统计，且测试继续&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;dl&gt;
+&lt;dt&gt;&lt;span class="caps"&gt;CHECK&lt;/span&gt;&lt;/dt&gt;
+&lt;dd&gt;检查失败时生成错误消息并增加失败案例统计，测试继续&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;dl&gt;
+&lt;dt&gt;&lt;span class="caps"&gt;REQUIRE&lt;/span&gt;&lt;/dt&gt;
+&lt;dd&gt;与&lt;span class="caps"&gt;CHECK&lt;/span&gt;类似，不同的是它报告的是严重的错误，检查失败时中止测试。例如用来检查代码将要使用的对象是否存在&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;检查器宏的基本形式是&lt;code&gt;BOOST_&amp;lt;level&amp;gt;[_check]&lt;/code&gt;，只接受一个参数。唯一的例外是&lt;code&gt;BOOST_ERROR&lt;/code&gt;宏和&lt;code&gt;BOOST_FAIL&lt;/code&gt;宏，它们用来生成显式的错误。这是Bosst.Test检查器的&lt;a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/testing-tools/reference.html"&gt;完整列表&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;基本的宏（&lt;code&gt;BOOST_WARN&lt;/code&gt;、&lt;code&gt;BOOST_CHECK&lt;/code&gt;以及&lt;code&gt;BOOST_REQUIRE&lt;/code&gt;）只接受一个参数，即所检查的表达式，例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;BOOST_WARN&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;short&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;BOOST_CHECK&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;BOOST_REQUIRE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果检查没有通过，Boost.Test会报告检查在源代码中的行数以及所给定的条件。用户也可用&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_MESSAGE&lt;/code&gt;宏报告自定义的消息。&lt;/p&gt;
+&lt;p&gt;在需要进行比较时，最好使用特殊的宏，如&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_EQUAL&lt;/code&gt;，&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_NE&lt;/code&gt;，&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_GT&lt;/code&gt;，等等。这些特殊宏的好处是它们会同时显示期望值和实际值，而不是只显示一句简单的失败消息（此功能也适用于用&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_PREDICATE&lt;/code&gt;宏定义的比较函数）。以下面的代码为例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_CHECK&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;BOOST_CHECK_EQUAL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;第一个检查只会报告说检查失败：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cpp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;test&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;check&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="n"&gt;failed&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;而第二个检查会报告为什么检查失败以及实际的值：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cpp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;test&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;check&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt; &lt;span class="n"&gt;failed&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Boost.Test也提供了比较集合类型的特殊检查器（&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_EQUAL_COLLECTION&lt;/code&gt;），以及按位比较的检查器（&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_BITWISE_EQUAL&lt;/code&gt;）。&lt;/p&gt;
+&lt;p&gt;由于浮点数精度的问题，不能采用标准比较符号比较浮点数，但是Boost.Test提供了几个特殊的宏解决了这个问题：&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_CLOSE&lt;/code&gt;、&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_CLOSE_FRACTION&lt;/code&gt;和&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_SMALL&lt;/code&gt;（使用这些宏需要包含额外的头文件：boost/test/floating_point_comparison.hpp）。&lt;/p&gt;
+&lt;p&gt;在某些场合，用户还需要检查代码是否抛出异常。可用&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_NO_THROW&lt;/code&gt;宏检查用户代码没有抛出异常的情况。该宏接受一个表达式作为参数，对表达是求值，如果有异常抛出就根据检查等级执行相应的操作。如果要检查用户代码抛出特定异常的情况，可以使用&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_THROW&lt;/code&gt;宏，该宏对表达式求值（表达式作为第一个参数传入），然后检查是否抛出异常、抛出的异常的类型是否正确（异常类型作为第二个参数传入）。还有一个&lt;code&gt;BOOST_&amp;lt;level&amp;gt;_EXCEPTION&lt;/code&gt;宏用来检查用户代码是否抛出异常，还提供额外的检查器以检查位于异常对象内部的数据，并返回&lt;code&gt;true&lt;/code&gt;或&lt;code&gt;false&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;Boost.Test的另外一个自动化的任务是输出结果。该功能可以用来检查&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt;之类的操作符。Boost.Test提供了特殊的输出类，这些类与&lt;code&gt;std::ostream&lt;/code&gt;兼容，用户可以向它们输出数据，还可获取它们的内容。此外用户还可创建包含“所需输出”的文件，并以此文件中的数据与程序代码输出的数据进行比较。&lt;/p&gt;
+&lt;p&gt;一些情况下，检查点检查也很有用（检查测试案例处于正常状态的时刻点）。Boost.Test提供了两个宏支持检查点检查：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;BOOST_TEST_CHECKPOINT&lt;/code&gt;宏，创建命名的检查点，当错误发生时输出错误消息，这在检查循环中的表达式时非常有用&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;BOOST_TEST_PASSPOINT&lt;/code&gt;宏（无参数），创建匿名检查点，当错误发生时输出最后一个检查点所在的行号&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Fixture&lt;/h2&gt;
+&lt;p&gt;Fixture是一类特殊的对象，用以设置和清除单元测试执行所需的数据和资源。分离Fixture和实际的测试代码能够简化单元测试，使不同的测试案例和测试套件共用一份初始化代码。&lt;/p&gt;
+&lt;p&gt;Boost.Test中的Fixture通常实现为一个类或者结构体，在其构造函数中初始化数据，在其析构函数函数中清理数据。例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;MyFixture&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;MyFixture&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="o"&gt;~&lt;/span&gt; &lt;span class="n"&gt;MyFixture&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;delete&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;可以这样使用&lt;code&gt;MyFixture&lt;/code&gt;类：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;BOOST_AUTO_TEST_CASE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;test_case1&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;MyFixture&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="c1"&gt;// do something with f.i&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Boost.Test同时提供了特殊的宏以简化Fixture的使用。配置测试案例可以使用&lt;code&gt;BOOST_FIXTURE_TEST_CASE&lt;/code&gt;宏代替&lt;code&gt;BOOST_AUTO_TEST_CASE&lt;/code&gt;宏，唯一的不同之处在于&lt;code&gt;BOOST_FIXTURE_TEST_CASE&lt;/code&gt;宏有第二个参数（即Fixture对象），Fixture对象自动创建并传递给测试案例。使用宏比直接使用Fixture对象还有额外的优势，即用户能够直接访问Fixture对象的公有和保护成员，例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;#define BOOST_TEST_MODULE Test-case fixture example&lt;/span&gt;
+&lt;span class="cp"&gt;#include &amp;lt;boost/test/unit_test.hpp&amp;gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="n"&gt;F&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;F&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+  &lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="n"&gt;F&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+  &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="n"&gt;BOOST_FIXTURE_TEST_CASE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;simple_test&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;F&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;BOOST_CHECK_EQUAL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;此例中，Fixture对象F持有一个成员变量i，它能在测试案例中直接访问。&lt;/p&gt;
+&lt;p&gt;测试套件也有类似的功能，配置测试套件可以使用&lt;code&gt;BOOST_FIXTURE_TEST_SUITE&lt;/code&gt;宏代替&lt;code&gt;BOOST_AUTO_TEST_SUITE&lt;/code&gt;宏。&lt;code&gt;BOOST_FIXTURE_TEST_SUITE&lt;/code&gt;宏以测试套件对象为第二个参数，且为测试套件中的每个测试案例分别生成一个Fixture对象。需要记住的是：对每个测试案例/测试套件，都会创建一个新的Fixture对象，测试案例中的Fxiture对象的状态改变不会改变其它测试案例。&lt;/p&gt;
+&lt;p&gt;Boost.Test还支持第三种Fixture对象（即全局Fixture），用来进行全局数据的设置/清理。可以使用&lt;code&gt;BOOST_GLOBAL_FIXTURE&lt;/code&gt;宏创建全局环境中的的Fixture，传入Fixture的名字作为参数。在第一个测试案例开始前创建Fixture，在最后一个测试案例执行之后销毁。&lt;/p&gt;
+&lt;h2&gt;Output of&amp;nbsp;results&lt;/h2&gt;
+&lt;h2&gt;Execution&amp;nbsp;control&lt;/h2&gt;
+&lt;h1&gt;C++Mocking框架&lt;/h1&gt;
+&lt;h1&gt;更多资料&lt;/h1&gt;
+&lt;p&gt;关于&lt;span class="caps"&gt;TDD&lt;/span&gt;的资料,包括书籍、课程、文章等等：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;书籍：&lt;/li&gt;
+&lt;li&gt;Kent Beck. &lt;a href="http://www.amazon.com/gp/product/0321146530?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0321146530"&gt;Test-driven development: By&amp;nbsp;example&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;David Astels. &lt;a href="http://www.amazon.com/gp/product/0131016490?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0131016490"&gt;Test Driven Development: A Practical&amp;nbsp;Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Robert C. Martin. &lt;a href="http://www.amazon.com/gp/product/0132350882?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0132350882"&gt;Clean Code: A Handbook of Agile Software Craftsmanship&lt;/a&gt; -&amp;nbsp;本书主要面向Java程序员&lt;/li&gt;
+&lt;li&gt;Michael Feathers. &lt;a href="http://www.amazon.com/gp/product/0131177052?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0131177052"&gt;Working Effectively with Legacy&amp;nbsp;Code&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Martin Fowler, Kent Beck, John Brant, William Opdyke, Don Roberts. &lt;a href="http://www.amazon.com/gp/product/0201485672?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0201485672"&gt;Refactoring: Improving the Design of Existing&amp;nbsp;Code&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Steve Freeman, Nat Pryce. &lt;a href="http://www.amazon.com/gp/product/0321503627?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0321503627"&gt;Growing Object-Oriented Software, Guided by&amp;nbsp;Tests&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Steve McConnell. &lt;a href="http://www.amazon.com/gp/product/0735619670?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0735619670"&gt;Code Complete, 2ed&lt;/a&gt; -&amp;nbsp;内容包含很多代码设计方面的建议，其中一章专门介绍单元测试和其它测试&lt;/li&gt;
+&lt;li&gt;Paul Hamill. &lt;a href="http://www.amazon.com/gp/product/0596006896?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0596006896"&gt;Unit Test&amp;nbsp;Frameworks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;James Shore. &lt;a href="http://www.amazon.com/gp/product/0596527675?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0596527675"&gt;The Art of Agile&amp;nbsp;Development&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;极限编程系列：&lt;ul&gt;
+&lt;li&gt;Kent Beck, Cynthia Andres. &lt;a href="http://www.amazon.com/gp/product/0321278658?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0321278658"&gt;Extreme Programming Explained: Embrace Change,&amp;nbsp;2ed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Kent Beck, Martin Fowler. &lt;a href="http://www.amazon.com/gp/product/0201710919?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0201710919"&gt;Planning Extreme&amp;nbsp;Programming&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Ron Jeffries, Ann Anderson, Chet Hendrickson. &lt;a href="http://www.amazon.com/gp/product/0201708426?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0201708426"&gt;Extreme Programming&amp;nbsp;Installed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Lisa Crispin, Tip House. &lt;a href="http://www.amazon.com/gp/product/0321113551?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0321113551"&gt;Testing Extreme&amp;nbsp;Programming&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Ken Auer, Roy Miller. &lt;a href="http://www.amazon.com/gp/product/0201616408?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0201616408"&gt;Extreme Programming Applied: Playing to&amp;nbsp;Win&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Java语言：&lt;ul&gt;
+&lt;li&gt;Petar Tahchiev, Felipe Leme, Vincent Massol, Gary Gregory. &lt;a href="http://www.amazon.com/gp/product/1935182021?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=1935182021"&gt;JUnit in Action,&amp;nbsp;2ed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class="caps"&gt;J.B.&lt;/span&gt; Rainsberger. &lt;a href="http://www.amazon.com/gp/product/1932394230?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=1932394230"&gt;JUnit Recipes: Practical Methods for Programmer&amp;nbsp;Testing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Kent Beck. &lt;a href="http://www.amazon.com/gp/product/0596007434?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=0596007434"&gt;JUnit Pocket&amp;nbsp;Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Lasse Koskela. &lt;a href="http://www.amazon.com/gp/product/1932394850?ie=UTF8&amp;amp;tag=aleottshompag-20&amp;amp;linkCode=as2&amp;amp;camp=1789&amp;amp;creative=390957&amp;amp;creativeASIN=1932394850"&gt;Test Driven: &lt;span class="caps"&gt;TDD&lt;/span&gt; and Acceptance &lt;span class="caps"&gt;TDD&lt;/span&gt; for Java&amp;nbsp;Developers&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;在线资源：&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://stackoverflow.com/questions/tagged/unit-testing"&gt;StackOverflow上关于单元测试的内容&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://googletesting.blogspot.com/"&gt;Google Testing&amp;nbsp;Blog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Wiki at &lt;a href="http://c2.com/cgi/wiki?UnitTest"&gt;c2.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.lenholgate.com/blog/2004/05/practical-testing.html"&gt;Practical Testing&lt;/a&gt; —&amp;nbsp;测试主题系列博客&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="cpp"></category><category term="unittest"></category></entry><entry><title>c++智能指针详解</title><link href="/blog/2014/10/09/cpp-smart-pointers/" rel="alternate"></link><updated>2014-10-09T00:24:32+08:00</updated><author><name>九哥</name></author><id>tag:,2014-10-09:blog/2014/10/09/cpp-smart-pointers/</id><summary type="html">&lt;h1&gt;说明&lt;/h1&gt;
+&lt;p&gt;本文翻译自Herb&amp;nbsp;Sutter的系列文章GotW(89-91):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://herbsutter.com/2013/05/29/gotw-89-solution-smart-pointers/"&gt;gotw-89-solution-smart-pointers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://herbsutter.com/2013/05/30/gotw-90-solution-factories/"&gt;gotw-90-solution-factories&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-parameters/"&gt;gotw-91-solution-smart-pointer-parameters&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;未经同意，请勿转载。&lt;/p&gt;
+&lt;h1&gt;智能指针&lt;/h1&gt;
+&lt;h1&gt;智能指针在Factory模式中的应用&lt;/h1&gt;
+&lt;h1&gt;智能指针作为参数&lt;/h1&gt;</summary><category term="cpp"></category></entry><entry><title>sicp 1.3.2</title><link href="/blog/2014/10/08/sicp-1-3-2/" rel="alternate"></link><updated>2014-10-08T20:50:08+08:00</updated><author><name>九哥</name></author><id>tag:,2014-10-08:blog/2014/10/08/sicp-1-3-2/</id><summary type="html">&lt;ul&gt;
+&lt;li&gt;练习1.34&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;采用替换模型进行分析:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;g&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果需要求值:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;采用替换模型替换为:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;进一步替换为:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;由于2不是一个可以调用的过程，最终求值(f&amp;nbsp;f)会导致运行时错误。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.35&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fixed&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;point&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+             &lt;span class="mf"&gt;1.0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.36&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fixed&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;point&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;first&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guest&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;enough&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;v1&lt;/span&gt; &lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;v1&lt;/span&gt; &lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="n"&gt;tolerance&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;try&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;display&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newline&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;let&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+          &lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;enough&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+          &lt;span class="n"&gt;next&lt;/span&gt;
+          &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;try&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;try&lt;/span&gt; &lt;span class="n"&gt;first&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guest&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.37&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cont&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;frac&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cont&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;frac&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cont&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;frac&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+              &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="sicp"></category></entry><entry><title>sicp 1.3.1</title><link href="/blog/2014/09/23/sicp-1-3-1/" rel="alternate"></link><updated>2014-09-23T22:21:05+08:00</updated><author><name>九哥</name></author><id>tag:,2014-09-23:blog/2014/09/23/sicp-1-3-1/</id><summary type="html">&lt;h1&gt;导读&lt;/h1&gt;
+&lt;p&gt;也许我们曾经在某个场合听说过这些术语：“函数式语言”、“函数式编程范式”、“纯函数式语言”。在阅读sicp之前我对这些术语也只是“不明觉厉”。&lt;/p&gt;
+&lt;p&gt;一般而言，如果一种编程语言允许函数成为“第一等公民”(first class&amp;nbsp;object)，我们就可以将这类语言归为“函数式语言”。本书介绍了函数作为“第一等公民”所拥有的特权：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;可以用变量命名&lt;/li&gt;
+&lt;li&gt;可以作为参数传递&lt;/li&gt;
+&lt;li&gt;可以作为函数返回值&lt;/li&gt;
+&lt;li&gt;可以包含在数据结构中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;由此可见，本书采用的scheme是函数式语言，而c/c++/java等不是函数式语言。本节展示了如何将函数作为参数传递，同时也展示了将函数作为参数传递的巨大威力。&lt;/p&gt;
+&lt;h1&gt;习题解答&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.29&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="mi"&gt;0&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;simpson&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;integral&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;let&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;simpson&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+               &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;odd&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+               &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="mf"&gt;3.0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="n"&gt;simpson&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;simpson&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;integral&lt;/span&gt; &lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mf"&gt;0.25&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;simpson&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;integral&lt;/span&gt; &lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mf"&gt;0.25&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.30&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+              &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.31&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;product过程的递归实现:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="mi"&gt;1&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;用product定义factorial:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;factorial&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+           &lt;span class="mi"&gt;1&lt;/span&gt;
+           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lambda&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+           &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;product过程的迭代实现:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+              &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.32&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="err"&gt;递归版本&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;accumulate&lt;/span&gt; &lt;span class="n"&gt;combiner&lt;/span&gt; &lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;combiner&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;accumulate&lt;/span&gt; &lt;span class="n"&gt;combiner&lt;/span&gt; &lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+
+&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="err"&gt;迭代版本&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;accumulate&lt;/span&gt; &lt;span class="n"&gt;combiner&lt;/span&gt; &lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+              &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;combiner&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                        &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;null&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;accumulate&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;accumulate&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;term&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="sicp"></category></entry><entry><title>sicp 1.2 (2)</title><link href="/blog/2014/09/21/sicp-1-2-2/" rel="alternate"></link><updated>2014-09-21T20:37:33+08:00</updated><author><name>九哥</name></author><id>tag:,2014-09-21:blog/2014/09/21/sicp-1-2-2/</id><summary type="html">&lt;h1&gt;导读&lt;/h1&gt;
+&lt;p&gt;求解最大公约数的“欧几里得算法”非常适合通过递归过程描述。基于最大公约数算法我们可以进而实现素数检测的算法。本书介绍了一种基于概率的素数检测算法。素数检测算法在密码学方面具有相当的实用价值。目前广泛采用的非对称加密算法&lt;span class="caps"&gt;RSA&lt;/span&gt;就是基于大素数分解的。&lt;/p&gt;
+&lt;h1&gt;习题解答&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.20&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;由于scheme语言不是normal order的。我么只能通过手工通过代换模型展开计算(gcd 206&amp;nbsp;40)的计算过程。&lt;/p&gt;
+&lt;p&gt;我们可以trace打印出applicative order模式下计算(gcd 206&amp;nbsp;40)的计算过程。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;gcd&lt;/span&gt; &lt;span class="mi"&gt;206&lt;/span&gt; &lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;gcd&lt;/span&gt; &lt;span class="mi"&gt;40&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;gcd&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;gcd&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;gcd&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.21&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;smallest&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="mi"&gt;199&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;199&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;smallest&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="mi"&gt;1999&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;1999&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;smallest&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="mi"&gt;19999&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.22&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;primes&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;  &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+          &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;odd&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;begin&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timed&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;prime&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;primes&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+          &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;
+           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;primes&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.23&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;divides&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;remainder&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="mi"&gt;3&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;divides&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt; &lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;smallest&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;divisor&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.25&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;(expmod base exp&amp;nbsp;m)计算的是base取exp次幂，然后再对m求模。Alyssa建议的算法是先求出base的exp次幂，然后求模。这种方法的正确性取决于scheme解释器的实现方式。如果scheme解释器没有实现大整数处理，那么就有可能导致整数溢出，从而计算出错误的结果。就算是scheme解释器实现了大整数处理，这种方法也会比作者提供的算法效率低。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.26&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Louis&amp;nbsp;Reasoner的实现:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="n"&gt;exp&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;remainder&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                       &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+                    &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;remainder&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+                    &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;可以通过trace打印出Louis Reasoner实现的expmod计算(expmod 3 7&amp;nbsp;5)的过程。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;根据sicp作者在本节给出的实现计算(expmod 3 7&amp;nbsp;5)的过程。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;expmod&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;9&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="nl"&gt;trace:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="sicp"></category></entry><entry><title>sicp 1.2 (1)</title><link href="/blog/2014/09/14/sicp-1-2-1/" rel="alternate"></link><updated>2014-09-14T10:51:40+08:00</updated><author><name>九哥</name></author><id>tag:,2014-09-14:blog/2014/09/14/sicp-1-2-1/</id><summary type="html">&lt;h1&gt;导读&lt;/h1&gt;
+&lt;p&gt;要想真正理解Scheme语言，必须要深刻理解“递归”和“迭代”两个概念。目前国内的计算机专业都是采用c语言作为入门编程语言。学习c语言的时候，我们知道模块化编程的基本结构是“顺序”、“分支”和“循环”。甚至有人证明只需要用这3种结构就足以表达所有程序。在Scheme语言中则不然，通过本书的学习，我们可以得出结论：循环结构只是递归结构的一种”语法糖“。&lt;/p&gt;
+&lt;p&gt;本节还需要理解的一个”尾递归“的概念。通过”尾递归“优化可以实现循环结构。Scheme的&lt;span class="caps"&gt;IEEE&lt;/span&gt;标准要求Scheme解释器必须实现”尾递归“，因此在Scheme语言中循环结构不是必须的。我们熟知的c语言就不是”尾递归“的，因此在c语言中特殊的循环结构（如for,&amp;nbsp;while&amp;#8230;）是必不可少的。&lt;/p&gt;
+&lt;h1&gt;习题解答&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.9&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;第一个过程是递归的。我们可以通过trace查看(plus 4&amp;nbsp;5)的递归调用过程。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;6&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;7&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;8&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;9&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;第二个过程是迭代的。下面是(plus 4&amp;nbsp;5)的迭代调用过程。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;3&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;6&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;7&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;8&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dec&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;inc&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mi"&gt;9&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plus&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;9&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.11&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;;;&lt;/span&gt;&lt;span class="err"&gt;递归过程&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;n&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;))))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.12&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pascal&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;triangle&lt;/span&gt; &lt;span class="n"&gt;row&lt;/span&gt; &lt;span class="n"&gt;col&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;row&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;row&lt;/span&gt; &lt;span class="n"&gt;col&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;col&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;
+          &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pascal&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;triangle&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;row&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;col&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+             &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pascal&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;triangle&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;row&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;col&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;练习1.15&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在求值(sine&amp;nbsp;12.15)时，p将被使用5次.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sine&lt;/span&gt; &lt;span class="mf"&gt;12.15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="mf"&gt;12.15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;12.15&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sine&lt;/span&gt; &lt;span class="mf"&gt;4.05&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="mf"&gt;4.05&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;4.05&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sine&lt;/span&gt; &lt;span class="mf"&gt;1.3499999999999999&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="mf"&gt;1.3499999999999999&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;1.3499999999999999&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sine&lt;/span&gt; &lt;span class="mf"&gt;0.44999999999999996&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="mf"&gt;0.44999999999999996&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.44999999999999996&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sine&lt;/span&gt; &lt;span class="mf"&gt;0.15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="mf"&gt;0.15&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.15&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sine&lt;/span&gt; &lt;span class="mf"&gt;0.049999999999999996&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="mf"&gt;0.049999999999999996&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.049999999999999996&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.049999999999999996&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="mf"&gt;0.049999999999999996&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="mf"&gt;0.049999999999999996&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;1.2499999999999998e-4&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.1495&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="mf"&gt;0.1495&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="mf"&gt;0.1495&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.003341362375&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.4351345505&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="mf"&gt;0.4351345505&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="mf"&gt;0.4351345505&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.08238927958303073&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.9758465331678772&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="mf"&gt;0.9758465331678772&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="mf"&gt;0.9758465331678772&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="mf"&gt;0.9292756784936136&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.7895631144708228&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.7895631144708228&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.7895631144708228&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;|&lt;/span&gt;  &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.4922214714997821&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.39980345741334&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;求值(sine&amp;nbsp;a)时，空间增长的阶为O(n)，计算时间增长的阶为O(log(n)).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;练习1.16&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fast&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;expt&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;a&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+            &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.17&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fast&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="n"&gt;a&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+          &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fast&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;halve&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+          &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;faslt&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.18&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fast&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;product&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;halve&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;double&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+            &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.19&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;even&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+         &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;
+                   &lt;span class="n"&gt;b&lt;/span&gt;
+                   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;     &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+                   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;   &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+                   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+                        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+                        &lt;span class="n"&gt;p&lt;/span&gt;
+                        &lt;span class="n"&gt;q&lt;/span&gt;
+                        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;count&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fib&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fib&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="sicp"></category></entry><entry><title>sicp 1.1</title><link href="/blog/2014/09/09/sicp-1-1/" rel="alternate"></link><updated>2014-09-09T21:00:21+08:00</updated><author><name>九哥</name></author><id>tag:,2014-09-09:blog/2014/09/09/sicp-1-1/</id><summary type="html">&lt;h1&gt;导读&lt;/h1&gt;
+&lt;p&gt;Scheme语言是一种lisp方言。Scheme语言的特点就是语法非常简单，一般通过短期的学习都可以掌握基本语法和概念。相比较而言，目前的主流编程语言如C/C++, Java,&amp;nbsp;Javascript都需要一本专著来介绍语法和基本概念。其实我们学习程序语言的目的无非是希望能够表达某种设计，通过语言编写出能够高效运行的程序。Scheme语言能让我们越过枯燥的语法学习阶段，直接开始编写算法和数据结构。随着本书的内容的推进，许多新的抽象和概念逐渐浮现，有时候我们需要借助很多在其他编程语言里已经存在功能来帮助我们更好地表达，怎么办？很简单，我们用Scheme语言从头实现。通过这种方式，不但能让我们更深入理解一些概念如面向对象、闭包、模式匹配等，还能让我们在实现这些功能的同时加深对Scheme语言的理解。真是一举两得！&lt;/p&gt;
+&lt;p&gt;1.1小节主要介绍了Scheme语言的基本元素。我不会重复书里面已经介绍的内容。&lt;/p&gt;
+&lt;p&gt;本小节需要读者理解的概念:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;代换模型&lt;/li&gt;
+&lt;li&gt;求值顺序(applicative order / normal&amp;nbsp;order)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在此有必要介绍一下当前比较流行的Scheme版本。我个人比较推荐guile。guile是gnu/linux上的标配，所以比较容易获取。&lt;span class="caps"&gt;IDE&lt;/span&gt;的话推荐使用emacs，对于初学者我建议采用prelude配置，prelude已经预设配置好了scheme的开发环境。还要注意一点就是书上使用的Scheme的版本相对较老。所以在做练习的时候要注意对书上的代码做一些微调（如true改为#t, false改为#f,&amp;nbsp;nil改为&amp;#8217;()等）。详情可以参阅guile的帮助文档。&lt;/p&gt;
+&lt;h1&gt;习题解答&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;two&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;larger&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;nums&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;squares&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;squares&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.4&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用自然语言描述该过程所表达的意思是：当b&amp;gt;0时执行a +&amp;nbsp;b，当b&amp;lt;=0时执行a-b。其实就是a+|b|。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.5&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本题考察的是对求值顺序的理解。其中过程p定义为一个无穷递归的过程。如果解释器采用的是applicative order，那么无论if条件判断结果如何，解释器都会试图解释过程p，结果是stack over flow。如果解释器采用的是normal&amp;nbsp;order，那么当if条件判断出该分支不需要求值时，解释器不会对该表达式求值。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.6&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;解答本题需要理解&amp;#8221;Special Form&amp;#8221;和&amp;#8221;Procedure&amp;#8221;的区别。在Scheme语言中，所有的procedure都有一致的求值规则，special&amp;nbsp;form则有自己特别的求值规则。按照Scheme语言的表达式求值规则，求值一个表达式，需要先求值其子表达式。对于if的求值规则是先求值判别式，如果为true则求值then子句，如果为false则求值else子句。如果按照题目中所说，将if实现为一个procedure，由于这是一个procedure，无论判别式值是什么，解释器都会求值then子句和else子句，该递归函数会进入一个死循环。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;练习1.7&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;average&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;improve&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;average&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;good&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;enough&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="mf"&gt;0.001&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;improve&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;good&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;enough&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="n"&gt;guess&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;练习1.8&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;improve&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;square&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;good&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;enough&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;current&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;current&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="mf"&gt;0.001&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;improve&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;good&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;enough&lt;/span&gt;&lt;span class="o"&gt;?&lt;/span&gt; &lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="n"&gt;guess&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;guess&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;define&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cube&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="sicp"></category></entry><entry><title>sicp读书笔记</title><link href="/blog/2014/09/08/introduction-to-sicp-reading-note/" rel="alternate"></link><updated>2014-09-08T21:11:38+08:00</updated><author><name>九哥</name></author><id>tag:,2014-09-08:blog/2014/09/08/introduction-to-sicp-reading-note/</id><summary type="html">&lt;p&gt;《计算机程序的构造与解释》是一本神奇的书。它于1984年出版第一版，于1996年出版第二版，此后该书一直没有再版&amp;nbsp;。在计算机科学领域，新技术、新概念层出不穷，但是本书30年内容并没有多大的变化，30年后的今天我再次阅读还是会为作者对计算机技术的真知灼见所震惊。&lt;/p&gt;
+&lt;p&gt;本书的英文版在amazon上的书评非常由意思。赞誉者称之为“武林绝学”，贬之者把它贬得不值一文。但是推崇它的阵营里面有Paul Graham, Peter&amp;nbsp;Norvig等世界级的大牛，由此我们可以看出此书的分量。&lt;/p&gt;
+&lt;p&gt;想要学习这么一本好书，必然要花大量的时间和精力。为了自我监督，我打算将学习的进度和所领悟的知识写成一个博客系列。希望本博客系列能够帮助我打通“任督二脉”。&lt;/p&gt;</summary><category term="sicp"></category></entry></feed>

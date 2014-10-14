@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>例解C++测试驱动开发和单元测试</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Open Graph tags -->
+
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="例解C++测试驱动开发和单元测试"/>
+            <meta property="og:url" content="/blog/2014/10/09/cpp-tdd-unittest/"/>
+            <!--meta property="og:description" content="声明 本文翻译自Alex Ott的博客：Test-driven development and unit testing with examples in C++ 未经同意，请勿转载。 测试驱动开发基础 测试驱动开发 测试驱动开发(TDD)是一种软件开发的流程。它依赖短开发周期的多次迭代： 需要改进已有功能或者开发新功能时，开发人员首先编写测试案例（此刻测试案例运行失败） 然后实现代码使测试案例运行通过 最后重构代码使其符合标准 测试驱动开发与极限编程中的“测试先行(test-first)”概念相关，也经常与“敏捷开发”联系起来。单就测试驱动开发来说，有其优点，也有缺点。优缺点姑且不论，我们能在实际项目中采用这种方法提升代码质量。 TDD工作流可以描述为如下步骤的循环(参考下图)： 确定实现哪些功能 为每个功能添加单元测试案例 编译运行测试案例，检查是否有错误 实现代码以使测试通过 重构 ..."/-->
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.lovers.min.css" type="text/css"/>
+        <link rel="stylesheet" href="/theme/css/style.lovers.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+    <!--link href="/theme/css/pygments.css" rel="stylesheet"-->
+    <link href="/theme/css/prism.css" rel="stylesheet" />
+  
+    <!-- JavaScript plugins (requires jQuery) -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery.pageslide.css">
+
+
+</head>
+<body>
+
+<div class="wrap">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 col-md-8 col-lg-9 col-xs-12">
+                <div>
+                <img src="/images/yourheaderimage.png" class="img-responsive" alt="Responsive image">
+                </div>
+                <hr class="hidden-xs"/>
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h2>
+                    <a href="/blog/2014/10/09/cpp-tdd-unittest/"
+                       rel="bookmark"
+                       title="Permalink to 例解C++测试驱动开发和单元测试">
+                        例解C++测试驱动开发和单元测试
+                    </a>
+                </h2>
+            </header>
+            <div class="entry-content">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="icon-calendar"></i>周四 09 十月 2014
+    </span>
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/cpp.html">cpp</a>
+        /
+	<a href="/tag/unittest.html">unittest</a>
+  
+</footer><!-- /.post-info -->                    </div>
+                    <div class="panel-body">
+                    <h1>声明</h1>
+<p>本文翻译自Alex Ott的博客：<a href="http://alexott.net/en/cpp/CppTestingIntro.html">Test-driven development and unit testing with examples in&nbsp;C++</a></p>
+<p>未经同意，请勿转载。</p>
+<h1>测试驱动开发基础</h1>
+<h2>测试驱动开发</h2>
+<p>测试驱动开发(<a href="http://en.wikipedia.org/wiki/Test-driven_development"><span class="caps">TDD</span></a>)是一种软件开发的流程。它依赖短开发周期的多次迭代：</p>
+<ul>
+<li>需要改进已有功能或者开发新功能时，开发人员首先编写测试案例（此刻测试案例运行失败）</li>
+<li>然后实现代码使测试案例运行通过</li>
+<li>最后重构代码使其符合标准</li>
+</ul>
+<p>测试驱动开发与<a href="http://en.wikipedia.org/wiki/Extreme_programming">极限编程</a>中的“测试先行(test-first)”概念相关，也经常与“敏捷开发”联系起来。单就测试驱动开发来说，有其<a href="http://en.wikipedia.org/wiki/Test-driven_development#Benefits">优点</a>，也有<a href="http://en.wikipedia.org/wiki/Test-driven_development#Vulnerabilities">缺点</a>。优缺点姑且不论，我们能在实际项目中采用这种方法提升代码质量。</p>
+<p><span class="caps">TDD</span>工作流可以描述为如下步骤的循环(参考下图)：</p>
+<ul>
+<li>确定实现哪些功能</li>
+<li>为每个功能添加单元测试案例</li>
+<li>编译运行测试案例，检查是否有错误</li>
+<li>实现代码以使测试通过</li>
+<li>重构</li>
+<li>重复运行测试，如果测试失败，修改代码</li>
+<li>提交修改</li>
+<li>实现下一个功能（重复以上步骤）</li>
+</ul>
+<p><img alt="测试驱动开发流程" src="/images/TDD.png" /></p>
+<h2>单元测试及框架</h2>
+<p>众所周知，软件测试的分类如下：</p>
+<ul>
+<li>单元测试</li>
+<li>集成测试</li>
+<li>回归测试</li>
+<li>验收测试</li>
+<li>性能测试</li>
+</ul>
+<p>本文主要讨论单元测试，但是某些技术也适用于其他测试类型。</p>
+<p>单元测试用于测试代码单元以确保这些代码单元正常工作。代码单元是应用程序的最小可测试部分。在过程式语言中，代码单元可能是一个函数或者过程。一般来说，单元测试由开发人员完成,&nbsp;其目标是隔离应用程序的各个部分，确保各个部分正确工作。单元测试可以看作是所测试代码段所必须符合的严格的书面规格。</p>
+<p>单元测试有以下优点：</p>
+<ul>
+<li>管理变化，应用单元测试，程序员在项目后期重构代码也能保证代码的正确性</li>
+<li>简化集成，单元测试能够降低代码单元内部的不确定性，可以用在自底向上测试方法中。先测试程序的一部分，然后整体测试代码，这样使集成测试更加容易</li>
+<li>单元测试可以作为系统的活文档，开发人员可以通过查看单元测试代码了解程序代码的<span class="caps">API</span></li>
+</ul>
+<h3>单元测试框架</h3>
+<p>通常采用单元测试框架来简化单元测试。单元测试框架应当提供如下功能：</p>
+<ul>
+<li>新手能够简单明了地编写单元测试</li>
+<li>测试框架允许老手编写复杂的测试</li>
+<li>测试模块可以包含多个小的测试案例，并允许将它们组织成测试套件</li>
+<li>在开发初期用户也许需要详尽的错误信息，在回归测试阶段用户只想知道是否有测试案例失败</li>
+<li>对于小测试模块，执行时间和编译时间要能够匹配。测试者不希望很小的测试案例花大量时间编译</li>
+<li>对于复杂的运行时间长的测试案例，测试者希望能看到测试进展情况</li>
+<li>测试案例之间能够独立执行，互不影响。比如，某测试案例崩溃不会影响其它测试案例</li>
+<li>简单的测试不需依赖外部库</li>
+</ul>
+<p>现在几乎所有编程语言都有不只一个单元测试框架。最广泛使用的是<a href="http://en.wikipedia.org/wiki/XUnit">xUnit</a>单元测试框架系列(JUnit, CppUnit,&nbsp;NUnit&#8230;.)。xUnit单元测试框架系列易于使用，它们的功能和架构类似。xUnit单元测试框架由以下部分组成：</p>
+<ul>
+<li>断言，检查单个条件</li>
+<li>测试案例，组合多个断言，测试一组功能</li>
+<li>测试套件，组合多个逻辑上互相关联的测试案例</li>
+<li>Fixture，配置测试案例所需的数据和状态，并在执行完成后清理。这些框架支持测试案例级的Fixture、测试套件级的Fixture、以及全局的Fixture</li>
+<li>还有测试执行监控程序，用来控制测试案例的执行和收集测试案例的失败数据</li>
+</ul>
+<h3>如何组织单元测试案例</h3>
+<p>一般来说，应当为所有公开暴露的函数编写单元测试，包括没有声明为static的自由函数、类的所有公有成员函数（包括公有构造函数和重载的操作符）。单元测试力求覆盖函数中的主要路径，例如不同的条件分支和循环等等。还要处理正常情况和边界情况、提供正确数据和随机数据，进而可以测试程序的错误处理逻辑。<a href="http://geosoft.no/development/unittesting.html">这些文章</a>提供更多关于如何组织单元测试的建议。</p>
+<p>测试案例通常按照某些标准组合成测试套件：共有的功能、相同功能的不同案例、共同的Fixture等等。Fixture负责配置和清除测试运行所需的数据，以使测试案例更加简短并且易于理解。</p>
+<p>推荐采用如下方法实现测试案例：</p>
+<ul>
+<li>一个测试案例只测试一个功能</li>
+<li>简短的测试案例</li>
+<li>测试能快速执行，这样才可能经常运行测试</li>
+<li>测试之间互不干扰。失败的测试不能影响其它的测试</li>
+<li>测试不能依赖它们的执行顺序</li>
+</ul>
+<p>有些观点认为，把所有测试揉在一个大函数中能够提升代码可读性，使代码更精炼。对于这种观点有以下反对意见（在<a href="http://www.boost.org/doc/libs/1_45_0/libs/test/doc/html/utf/user-guide/test-organization.html">这些文档</a>中有所提及）：</p>
+<ul>
+<li>如果发生严重问题，或者在某些检查中抛出了异常，之后的测试案例无法被执行</li>
+<li>无法只检查测试单元的某个子系统</li>
+</ul>
+<p>代码可测试性还依赖于代码的设计。有时编写单元测试非常困难，因为需要测试的功能要么隐藏在复杂的接口后面，要么有很多外部依赖，因此正确组织好测试也非常困难。以下是一些关于如何编写易于单元测试的代码的建议：</p>
+<ul>
+<li>代码应该松散耦合，类和函数的外部依赖应该尽量少；</li>
+<li>避免在类或者函数内部创建复杂类的实例。此时，这些类的实例通过指针和引用传入更好，这样就可以利用Mock来测试你的代码了；</li>
+<li>尽力减少类暴露的公有<span class="caps">API</span>，编写不同的类完成不同的任务比编写一个类完成所有任务要好。</li>
+</ul>
+<p>在此<a href="http://googletesting.blogspot.com/2008/08/by-miko-hevery-so-you-decided-to.html">博客</a>中可以找到更多关于编写可测试代码的建议。</p>
+<h2>Mocking</h2>
+<p>单元测试中，Mock对象能模拟复杂、真实的对象的行为，在不可能将真实对象集成到单元测试的情况下非常有用。如果对象有下列一个特征，用Mock对象代替就非常有用：</p>
+<ul>
+<li>产生不确定的结果（如当前时间或者温度）</li>
+<li>包含很难重现的状态（如网络错误）</li>
+<li>对象暂时还不存在，或者行为还会变化</li>
+<li>包含只用来测试的信息和方法</li>
+</ul>
+<p>Mock对象与其模仿的真实对象的接口是一致的，这样客户代码可以不用关心它使用的是一个真实对象还是一个Mock对象。许多Mock框架允许程序员指定Mock对象调用的方法和调用次序，及其传递的参数和返回值。从而如网络socket这样复杂对象的行为可以由Mock对象来模拟，程序员可以观察被测试对象对其所处于的各种状态的的回应是否正常。</p>
+<p>典型的工作流如下：</p>
+<ul>
+<li>掌握被测试类的接口，这样才能同时使用Mock对象和真实对象</li>
+<li>用框架创建Mock类（也可以自己编写Mock类，但是一般不推荐）</li>
+<li>编写用Mock对象测试的目标代码</li>
+<li>创建测试案例并采用Mock对象代替真实对象。在测试案例中采取如下步骤：</li>
+<li>创建Mock类的实例</li>
+<li>设定Mock对象的行为和期望：哪些方法该调用，哪些方法不该调用，方法调用该返回什么数据，等等</li>
+<li>运行代码（这些代码使用了Mock对象）</li>
+<li>获取代码运行的结果并检查是否与期望的返回值一致，通常由Mock框架在销毁Mock对象时完成</li>
+</ul>
+<p><a href="http://alexott.net/en/cpp/CppTestingIntro.html#gmock-example">这里</a>可以找到使用Google C++&nbsp;Mocking框架的例子。</p>
+<h1>C++单元测试</h1>
+<p>本节介绍C++中的单元测试和Mocking。</p>
+<h2>C++单元测试及Boost.Test</h2>
+<p>C++有很多<a href="http://en.wikipedia.org/wiki/List_of_unit_testing_frameworks#C.2B.2B">单元测试框架</a>。当前最广为使用的有Boost.Test和<a href="https://code.google.com/p/googletest/">Google C++测试框架</a>。它们的功能类似，由于作者在公司项目和个人项目中使用Boost.Test，因此本文只介绍Boost.Test。</p>
+<p>Boost.Test有这些功能：</p>
+<ul>
+<li>初级用户和高级用户均适合使用</li>
+<li>允许将测试案例组织成测试套件</li>
+<li>测试案例可以自动注册也可以手动注册</li>
+<li>采用参数化和类型化的测试案例测试不同的数据类型</li>
+<li>Fixture（资源的初始化和清除）：测试案例夹具、测试套件夹具、全局夹具</li>
+<li>大量的断言和检查：</li>
+<li>异常（抛出或者没有抛出）</li>
+<li>相等、不等、大于、小于等等</li>
+<li>集合和比特位的相等测试</li>
+<li>明确的失败和成功</li>
+<li>浮点数比较，同时能够控制精度</li>
+<li>不同的检查等级：warning, check,&nbsp;require</li>
+<li>功能丰富的执行控制逻辑</li>
+<li>用户定义的main过程</li>
+<li>描述哪些测试应该失败</li>
+<li>测试结果输出为多种格式：文本、xml、&#8230;</li>
+<li>测试进度可视化</li>
+<li>跨平台（支持所有平台，由Boost库支持）</li>
+<li>Boost许可，运行不受限制地在任何地方使用</li>
+<li>上佳的<a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf.html">文档</a>和<a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/tutorials.html">教程</a></li>
+</ul>
+<p>唯一不足的是Boost.Test缺乏Mocking功能，尽管Google&nbsp;Mock框架可以与它配合使用。</p>
+<p>Boost.Test有不同的使用方法，依测试的复杂程度而定。用户可以可以自己编写测试函数然后手动注册以构建测试层次结构，也可以使用特殊的宏自动注册。</p>
+<p>本文以“自动”测试为例，读者可以阅读<a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/user-guide.html">Boost.Test的在线文档</a>中关于手动测试注册的内容。</p>
+<p>通常，由Boost.Test编写的测试代码由这些对象组成：</p>
+<ul>
+<li>测试案例，其中包含测试断言</li>
+<li>测试套件，由测试案例组合而成</li>
+<li>Fixture，负责配置和清除测试案例、测试套件、全局环境所需相关资源和数据</li>
+</ul>
+<p><a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/execution-monitor.html">Execution monitor</a>执行所有单元测试：控制单元测试的执行、处理错误、收集已执行或失败的单元测试的统计数据。开发者可以通过命令行选项、环境变量、源代码控制Execution&nbsp;monitor的行为。</p>
+<h2>自动注册的测试案例</h2>
+<p>对于简单单元测试，Boost.Test非常简单易用，只需包含必要的头文件，然后编写单元测试案例（或组织成测试套件），然后编译，将其与boost_unit_test_framework库链接（boost_unit_test_framework库包含负责配置和执行测试案例的main函数）。</p>
+<h2>最简单的测试程序</h2>
+<p>这是一个最简单的测试程序，定义了一个测试案例：</p>
+<div class="highlight"><pre><span class="cp">#define BOOST_TEST_MODULE Simple testcases</span>
+<span class="cp">#include &lt;boost/test/unit_test.hpp&gt;</span>
+
+<span class="n">BOOST_AUTO_TEST_CASE</span><span class="p">(</span><span class="n">simple_test</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">BOOST_CHECK_EQUAL</span><span class="p">(</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>第一行声明测试的名字，第二行包含必要的头文件，第4-6行定义测试案例（<code>BOOST_AUTO_TEST_CASE</code>宏定义一个名字为<code>simple_test</code>的测试案例，案例中包含一个断言：2+2=4，断言采用<code>BOOST_CHECK_EQUAL</code>进行检查）。</p>
+<p>编译执行该程序，屏幕上会打印如下内容（Boost.Test也可将结果输出为多种不同的格式，并且可以通过Execution&nbsp;Monitor的选项控制结果的详略程度）：</p>
+<div class="highlight"><pre><span class="n">Running</span> <span class="mi">1</span> <span class="n">test</span> <span class="k">case</span><span class="p">...</span>
+
+<span class="o">***</span> <span class="n">No</span> <span class="n">errors</span> <span class="n">detected</span>
+</pre></div>
+
+
+<p>如果出现错误，测试框架会在屏幕上打印如下信息：</p>
+<div class="highlight"><pre><span class="n">Running</span> <span class="mi">1</span> <span class="n">test</span> <span class="k">case</span><span class="p">...</span>
+<span class="n">test</span><span class="o">-</span><span class="n">simple</span><span class="p">.</span><span class="n">cpp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">:</span> <span class="n">error</span> <span class="n">in</span> <span class="s">&quot;simple_test&quot;</span><span class="o">:</span> <span class="n">check</span> <span class="mi">2</span><span class="o">+</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">5</span> <span class="n">failed</span> <span class="p">[</span><span class="mi">4</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="o">***</span> <span class="mi">1</span> <span class="n">failure</span> <span class="n">detected</span> <span class="n">in</span> <span class="n">test</span> <span class="n">suite</span> <span class="s">&quot;Simple testcases&quot;</span>
+</pre></div>
+
+
+<p>以上错误信息指出了测试程序（Simple&nbsp;testcases）中失败案例的个数，并且指出了错误发生的位置（test-simple.cpp的第5行），同时还显示了错误的附加信息（视所采用的检查函数而定）。</p>
+<h2>使用测试套件</h2>
+<p>当测试程序中包含大量的测试案例时，管理测试案例非常困难。Boost.Test支持将测试案例组合成测试套件，这样管理大量测试案例就非常容易了。测试套件同时还有其它优点，如为所有测试案例定义共同的Fixture，以及通过命令行选项选择执行部分测试案例。</p>
+<p>测试套件的用法非常简单，只需将测试套件的所有测试案例写在<code>BOOST_AUTO_TEST_SUITE</code>宏（以测试套件名为参数）和<code>BOOST_AUTO_TEST_SUITE_END</code>宏之间即可：</p>
+<div class="highlight"><pre><span class="cp">#define BOOST_TEST_MODULE Simple testcases 2</span>
+<span class="cp">#include &lt;boost/test/unit_test.hpp&gt;</span>
+
+<span class="n">BOOST_AUTO_TEST_SUITE</span><span class="p">(</span><span class="n">suite1</span><span class="p">)</span>
+
+<span class="n">BOOST_AUTO_TEST_CASE</span><span class="p">(</span><span class="n">test1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">BOOST_CHECK_EQUAL</span><span class="p">(</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_AUTO_TEST_CASE</span><span class="p">(</span><span class="n">test2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">BOOST_CHECK_EQUAL</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">BOOST_AUTO_TEST_SUITE_END</span><span class="p">()</span>
+</pre></div>
+
+
+<p>编译、运行测试套件的方法与测试案例一致。</p>
+<h2>单元测试工具及检查器</h2>
+<p>Boost.Test提供大量的<a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/testing-tools.html">测试工具/检查器</a>。这些检查器几乎都有不同的检查级别（为了方便阅读，本文用<code>&lt;level&gt;</code>来代表实际的级别）：</p>
+<ul>
+<li>
+<dl>
+<dt><span class="caps">WARN</span></dt>
+<dd>检查失败时生成警告消息，不增加失败案例统计，且测试继续</dd>
+</dl>
+</li>
+<li>
+<dl>
+<dt><span class="caps">CHECK</span></dt>
+<dd>检查失败时生成错误消息并增加失败案例统计，测试继续</dd>
+</dl>
+</li>
+<li>
+<dl>
+<dt><span class="caps">REQUIRE</span></dt>
+<dd>与<span class="caps">CHECK</span>类似，不同的是它报告的是严重的错误，检查失败时中止测试。例如用来检查代码将要使用的对象是否存在</dd>
+</dl>
+</li>
+</ul>
+<p>检查器宏的基本形式是<code>BOOST_&lt;level&gt;[_check]</code>，只接受一个参数。唯一的例外是<code>BOOST_ERROR</code>宏和<code>BOOST_FAIL</code>宏，它们用来生成显式的错误。这是Bosst.Test检查器的<a href="http://www.boost.org/doc/libs/release/libs/test/doc/html/utf/testing-tools/reference.html">完整列表</a>。</p>
+<p>基本的宏（<code>BOOST_WARN</code>、<code>BOOST_CHECK</code>以及<code>BOOST_REQUIRE</code>）只接受一个参数，即所检查的表达式，例如：</p>
+<div class="highlight"><pre><span class="n">BOOST_WARN</span><span class="p">(</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="o">==</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">short</span><span class="p">)</span> <span class="p">);</span>
+<span class="n">BOOST_CHECK</span><span class="p">(</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">);</span>
+<span class="n">BOOST_REQUIRE</span><span class="p">(</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="p">);</span>
+</pre></div>
+
+
+<p>如果检查没有通过，Boost.Test会报告检查在源代码中的行数以及所给定的条件。用户也可用<code>BOOST_&lt;level&gt;_MESSAGE</code>宏报告自定义的消息。</p>
+<p>在需要进行比较时，最好使用特殊的宏，如<code>BOOST_&lt;level&gt;_EQUAL</code>，<code>BOOST_&lt;level&gt;_NE</code>，<code>BOOST_&lt;level&gt;_GT</code>，等等。这些特殊宏的好处是它们会同时显示期望值和实际值，而不是只显示一句简单的失败消息（此功能也适用于用<code>BOOST_&lt;level&gt;_PREDICATE</code>宏定义的比较函数）。以下面的代码为例：</p>
+<div class="highlight"><pre><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="n">BOOST_CHECK</span><span class="p">(</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="p">);</span>
+<span class="n">BOOST_CHECK_EQUAL</span><span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="p">);</span>
+</pre></div>
+
+
+<p>第一个检查只会报告说检查失败：</p>
+<div class="highlight"><pre><span class="n">test</span><span class="p">.</span><span class="n">cpp</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">:</span> <span class="n">error</span> <span class="n">in</span> <span class="s">&quot;test&quot;</span><span class="o">:</span> <span class="n">check</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="n">failed</span>
+</pre></div>
+
+
+<p>而第二个检查会报告为什么检查失败以及实际的值：</p>
+<div class="highlight"><pre><span class="n">test</span><span class="p">.</span><span class="n">cpp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">:</span> <span class="n">error</span> <span class="n">in</span> <span class="s">&quot;test&quot;</span><span class="o">:</span> <span class="n">check</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="n">failed</span> <span class="p">[</span><span class="mi">2</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+
+<p>Boost.Test也提供了比较集合类型的特殊检查器（<code>BOOST_&lt;level&gt;_EQUAL_COLLECTION</code>），以及按位比较的检查器（<code>BOOST_&lt;level&gt;_BITWISE_EQUAL</code>）。</p>
+<p>由于浮点数精度的问题，不能采用标准比较符号比较浮点数，但是Boost.Test提供了几个特殊的宏解决了这个问题：<code>BOOST_&lt;level&gt;_CLOSE</code>、<code>BOOST_&lt;level&gt;_CLOSE_FRACTION</code>和<code>BOOST_&lt;level&gt;_SMALL</code>（使用这些宏需要包含额外的头文件：boost/test/floating_point_comparison.hpp）。</p>
+<p>在某些场合，用户还需要检查代码是否抛出异常。可用<code>BOOST_&lt;level&gt;_NO_THROW</code>宏检查用户代码没有抛出异常的情况。该宏接受一个表达式作为参数，对表达是求值，如果有异常抛出就根据检查等级执行相应的操作。如果要检查用户代码抛出特定异常的情况，可以使用<code>BOOST_&lt;level&gt;_THROW</code>宏，该宏对表达式求值（表达式作为第一个参数传入），然后检查是否抛出异常、抛出的异常的类型是否正确（异常类型作为第二个参数传入）。还有一个<code>BOOST_&lt;level&gt;_EXCEPTION</code>宏用来检查用户代码是否抛出异常，还提供额外的检查器以检查位于异常对象内部的数据，并返回<code>true</code>或<code>false</code>。</p>
+<p>Boost.Test的另外一个自动化的任务是输出结果。该功能可以用来检查<code>&lt;&lt;</code>之类的操作符。Boost.Test提供了特殊的输出类，这些类与<code>std::ostream</code>兼容，用户可以向它们输出数据，还可获取它们的内容。此外用户还可创建包含“所需输出”的文件，并以此文件中的数据与程序代码输出的数据进行比较。</p>
+<p>一些情况下，检查点检查也很有用（检查测试案例处于正常状态的时刻点）。Boost.Test提供了两个宏支持检查点检查：</p>
+<ul>
+<li><code>BOOST_TEST_CHECKPOINT</code>宏，创建命名的检查点，当错误发生时输出错误消息，这在检查循环中的表达式时非常有用</li>
+<li><code>BOOST_TEST_PASSPOINT</code>宏（无参数），创建匿名检查点，当错误发生时输出最后一个检查点所在的行号</li>
+</ul>
+<h2>Fixture</h2>
+<p>Fixture是一类特殊的对象，用以设置和清除单元测试执行所需的数据和资源。分离Fixture和实际的测试代码能够简化单元测试，使不同的测试案例和测试套件共用一份初始化代码。</p>
+<p>Boost.Test中的Fixture通常实现为一个类或者结构体，在其构造函数中初始化数据，在其析构函数函数中清理数据。例如：</p>
+<div class="highlight"><pre><span class="k">struct</span> <span class="n">MyFixture</span> <span class="p">{</span>
+  <span class="n">MyFixture</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="o">~</span> <span class="n">MyFixture</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">delete</span> <span class="n">i</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kt">int</span><span class="o">*</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>可以这样使用<code>MyFixture</code>类：</p>
+<div class="highlight"><pre><span class="n">BOOST_AUTO_TEST_CASE</span><span class="p">(</span> <span class="n">test_case1</span> <span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">MyFixture</span> <span class="n">f</span><span class="p">;</span>
+  <span class="c1">// do something with f.i</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Boost.Test同时提供了特殊的宏以简化Fixture的使用。配置测试案例可以使用<code>BOOST_FIXTURE_TEST_CASE</code>宏代替<code>BOOST_AUTO_TEST_CASE</code>宏，唯一的不同之处在于<code>BOOST_FIXTURE_TEST_CASE</code>宏有第二个参数（即Fixture对象），Fixture对象自动创建并传递给测试案例。使用宏比直接使用Fixture对象还有额外的优势，即用户能够直接访问Fixture对象的公有和保护成员，例如：</p>
+<div class="highlight"><pre><span class="cp">#define BOOST_TEST_MODULE Test-case fixture example</span>
+<span class="cp">#include &lt;boost/test/unit_test.hpp&gt;</span>
+
+<span class="k">struct</span> <span class="n">F</span> <span class="p">{</span>
+  <span class="n">F</span><span class="p">()</span> <span class="o">:</span> <span class="n">i</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="o">~</span><span class="n">F</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">BOOST_FIXTURE_TEST_CASE</span><span class="p">(</span><span class="n">simple_test</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">BOOST_CHECK_EQUAL</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>此例中，Fixture对象F持有一个成员变量i，它能在测试案例中直接访问。</p>
+<p>测试套件也有类似的功能，配置测试套件可以使用<code>BOOST_FIXTURE_TEST_SUITE</code>宏代替<code>BOOST_AUTO_TEST_SUITE</code>宏。<code>BOOST_FIXTURE_TEST_SUITE</code>宏以测试套件对象为第二个参数，且为测试套件中的每个测试案例分别生成一个Fixture对象。需要记住的是：对每个测试案例/测试套件，都会创建一个新的Fixture对象，测试案例中的Fxiture对象的状态改变不会改变其它测试案例。</p>
+<p>Boost.Test还支持第三种Fixture对象（即全局Fixture），用来进行全局数据的设置/清理。可以使用<code>BOOST_GLOBAL_FIXTURE</code>宏创建全局环境中的的Fixture，传入Fixture的名字作为参数。在第一个测试案例开始前创建Fixture，在最后一个测试案例执行之后销毁。</p>
+<h2>Output of&nbsp;results</h2>
+<h2>Execution&nbsp;control</h2>
+<h1>C++Mocking框架</h1>
+<h1>更多资料</h1>
+<p>关于<span class="caps">TDD</span>的资料,包括书籍、课程、文章等等：</p>
+<ul>
+<li>书籍：</li>
+<li>Kent Beck. <a href="http://www.amazon.com/gp/product/0321146530?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0321146530">Test-driven development: By&nbsp;example</a></li>
+<li>David Astels. <a href="http://www.amazon.com/gp/product/0131016490?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0131016490">Test Driven Development: A Practical&nbsp;Guide</a></li>
+<li>Robert C. Martin. <a href="http://www.amazon.com/gp/product/0132350882?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0132350882">Clean Code: A Handbook of Agile Software Craftsmanship</a> -&nbsp;本书主要面向Java程序员</li>
+<li>Michael Feathers. <a href="http://www.amazon.com/gp/product/0131177052?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0131177052">Working Effectively with Legacy&nbsp;Code</a></li>
+<li>Martin Fowler, Kent Beck, John Brant, William Opdyke, Don Roberts. <a href="http://www.amazon.com/gp/product/0201485672?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0201485672">Refactoring: Improving the Design of Existing&nbsp;Code</a></li>
+<li>Steve Freeman, Nat Pryce. <a href="http://www.amazon.com/gp/product/0321503627?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0321503627">Growing Object-Oriented Software, Guided by&nbsp;Tests</a></li>
+<li>Steve McConnell. <a href="http://www.amazon.com/gp/product/0735619670?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0735619670">Code Complete, 2ed</a> -&nbsp;内容包含很多代码设计方面的建议，其中一章专门介绍单元测试和其它测试</li>
+<li>Paul Hamill. <a href="http://www.amazon.com/gp/product/0596006896?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0596006896">Unit Test&nbsp;Frameworks</a></li>
+<li>James Shore. <a href="http://www.amazon.com/gp/product/0596527675?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0596527675">The Art of Agile&nbsp;Development</a></li>
+<li>极限编程系列：<ul>
+<li>Kent Beck, Cynthia Andres. <a href="http://www.amazon.com/gp/product/0321278658?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0321278658">Extreme Programming Explained: Embrace Change,&nbsp;2ed</a></li>
+<li>Kent Beck, Martin Fowler. <a href="http://www.amazon.com/gp/product/0201710919?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0201710919">Planning Extreme&nbsp;Programming</a></li>
+<li>Ron Jeffries, Ann Anderson, Chet Hendrickson. <a href="http://www.amazon.com/gp/product/0201708426?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0201708426">Extreme Programming&nbsp;Installed</a></li>
+<li>Lisa Crispin, Tip House. <a href="http://www.amazon.com/gp/product/0321113551?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0321113551">Testing Extreme&nbsp;Programming</a></li>
+<li>Ken Auer, Roy Miller. <a href="http://www.amazon.com/gp/product/0201616408?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0201616408">Extreme Programming Applied: Playing to&nbsp;Win</a></li>
+</ul>
+</li>
+<li>Java语言：<ul>
+<li>Petar Tahchiev, Felipe Leme, Vincent Massol, Gary Gregory. <a href="http://www.amazon.com/gp/product/1935182021?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=1935182021">JUnit in Action,&nbsp;2ed</a></li>
+<li><span class="caps">J.B.</span> Rainsberger. <a href="http://www.amazon.com/gp/product/1932394230?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=1932394230">JUnit Recipes: Practical Methods for Programmer&nbsp;Testing</a></li>
+<li>Kent Beck. <a href="http://www.amazon.com/gp/product/0596007434?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0596007434">JUnit Pocket&nbsp;Guide</a></li>
+<li>Lasse Koskela. <a href="http://www.amazon.com/gp/product/1932394850?ie=UTF8&amp;tag=aleottshompag-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=1932394850">Test Driven: <span class="caps">TDD</span> and Acceptance <span class="caps">TDD</span> for Java&nbsp;Developers</a></li>
+</ul>
+</li>
+<li>在线资源：</li>
+<li><a href="http://stackoverflow.com/questions/tagged/unit-testing">StackOverflow上关于单元测试的内容</a></li>
+<li><a href="http://googletesting.blogspot.com/">Google Testing&nbsp;Blog</a></li>
+<li>Wiki at <a href="http://c2.com/cgi/wiki?UnitTest">c2.com</a></li>
+<li><a href="http://www.lenholgate.com/blog/2004/05/practical-testing.html">Practical Testing</a> —&nbsp;测试主题系列博客</li>
+</ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /.entry-content -->
+    <hr />
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'httpzouivexgithubio'; // required: replace example with your forum shortname
+            var disqus_identifier = 'cpp-tdd-unittest';
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+        
+        <ul class="pager">
+        </ul>
+            </section>
+
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-3 col-xs-12">
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a class="btn btn-default" href="/index.html">Home</a></li>
+                    <li>
+                        <a class="btn btn-default" href="/archives.html">Archives</a>
+                    </li>
+                </ul><hr />
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        ~ About me ~
+    </div>
+    <div class="panel-body">
+        Whatever you want to say about yourself
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        ~ Follow me ~
+    </div>
+    <div class="panel-body">
+        <a href="http://github.com/zouivex"><img
+            class= "social-icon" src="/theme/images/github-icon.png"></img>
+        </a>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+            ~ Tag cloud ~
+    </div>
+    <div class="panel-body">
+            <a href="/tag/sicp.html"><span class="label label-default">sicp</span></a>
+            <a href="/tag/cpp.html"><span class="label label-default">cpp</span></a>
+            <a href="/tag/unittest.html"><span class="label label-default">unittest</span></a>
+ 
+    </div>
+</div>
+
+
+                    
+            </div>
+        </div>
+        <hr class="hidden-xs"/>
+        <div class="row">
+            <div class="footer">
+                <div class="container">
+                    <p class="footnote">©Christine Doig. Proudly powered by <a href="http://pelican.notmyidea.org/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</i></a>. Thanks to <a href="http://twitter.github.com/bootstrap/">Bootstrap</i></a>, <a href="http://subtlepatterns.com/">Subtle Patterns</i></a> and <a href="http://fortawesome.github.com/Font-Awesome/">Font-Awesome.</a><a href="https://github.com/chdoig/pelican-bootstrap3-lovers">Lovers Theme</a> by Christine Doig
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.pageslide.min.js"></script>
+<script src="/theme/js/prism.js"></script>
+<script>function validateForm(query)
+    {return (query.length > 0);}
+</script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'httpzouivexgithubio'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+</body>
+</html>
