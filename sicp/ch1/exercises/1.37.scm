@@ -1,17 +1,19 @@
 ;; Recursive version
 (define (cont-frac n d k)
-  (if (= k 1)
-      (/ (n k) (d k))
-      (/ (n k) (+ (d k) (cont-frac n d (- k 1))))))
+  (define (frac i)
+    (if (= i k)
+        (/ (n i) (d i))
+        (/ (n i) (+ (d i) (frac (+ i 1))))))
+  (frac 1))
 
 ;; Iterative version
 (define (cont-frac-iter n d k)
   (define (iter i result)
-    (if (= i k)
+    (if (= i 0)
         result
-        (iter (+ i 1)
+        (iter (- i 1)
               (/ (n i) (+ (d i) result)))))
-  (iter 0 0))
+  (iter k 0))
 
 (cont-frac (lambda(i) 1.0)
            (lambda(i) 1.0)
