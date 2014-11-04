@@ -6,8 +6,7 @@
 (define (tan-cf x k)
   (define (tan-cf-recursive i)
     (if (= i k)
-        (/ (square x)
-           (d i))
+        0
         (/ (square x)
            (- (d i) (tan-cf-recursive (+ i 1))))))
   (/ (tan-cf-recursive 1) x))

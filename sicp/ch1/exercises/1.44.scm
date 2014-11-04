@@ -9,11 +9,15 @@
         (iter (+ i 1) (compose result f))))
   (iter 1 f))
 
-(define dx 0.000001)
+(define dx 0.001)
 
 (define (smooth f)
   (lambda(x)
     (/ (+ (f x) (f (- x dx)) (f (+ x dx)))
        3)))
 
-((smooth sin) 3)
+(define (nth-smooth f n)
+  ((repeated smooth n) f))
+
+((nth-smooth sin 5) 1)
+(sin 1)
