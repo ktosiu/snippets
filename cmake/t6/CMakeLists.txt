@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.0)
+project(hellotest)
+set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake)
+message(STATUS "CMake Module path is: ${CMAKE_MODULE_PATH}")
+add_subdirectory(src)

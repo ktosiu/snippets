@@ -1,0 +1,6 @@
+find_package(HELLO REQUIRED)
+if(HELLO_FOUND)
+  add_executable(hello main.cpp)
+  include_directories(${HELLO_INCLUDE_DIR})
+  target_link_libraries(hello ${HELLO_LIBRARY})
+endif(HELLO_FOUND)
