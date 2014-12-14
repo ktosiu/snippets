@@ -1,5 +1,18 @@
-(define zero (lambda(x) (f ((n f) x))))
-(define (add-1 n)
-  (lambda (f) (lambda (x) (f ((n f) x)))))
+(define zero (lambda (f) (lambda (x) x)))
 
-(add-1 zero)
+(define (add-1 n)
+  (lambda (f)
+    (lambda (x) (f ((n f) x)))))
+
+(define one
+  (lambda (f)
+    (lambda (x) x)))
+
+(define two
+  (lambda (f)
+    (lambda (x) (f (f x)))))
+
+(define (add a b)
+  (lambda (f)
+    (lambda (x)
+      ((a f) ((b f) x)))))
