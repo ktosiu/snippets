@@ -5,7 +5,7 @@ HTML=$(SRC:.md=.html)
 
 PANDOCARGS = --latex-engine=xelatex
 
-all: clean $(PDFS) $(DOCXS) $(HTML)
+all: $(PDFS) $(DOCXS) $(HTML)
 
 pdf: $(PDFS)
 docx: $(DOCXS)
@@ -18,7 +18,7 @@ html: $(HTML)
 	pandoc $< -o $@
 
 %.html: %.md
-	python resume.py html < $< | pandoc -t html -c resume.css -V pagetitle:'Paul Waring - CV' -o $@
+	python resume.py html < $< | pandoc -t html -c resume.css -o $@
 
 clean:
 	rm *.pdf *.html *.docx

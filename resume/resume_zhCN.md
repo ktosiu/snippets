@@ -1,15 +1,15 @@
-Paul Waring
+邹旭
 ===========
 
-07754 725 493
-paul@xk7.net
+13811678926
+xu.zou@outlook.com
 
-Summary
+个人简介
 -------
 
 IT professional with broad range of qualifications up to postgraduate level. Experience in public, private and voluntary sectors, including combined eight years of service on several boards.
 
-Skills
+技术特长
 ------
 
 *   **Computer Languages:** Proficient with PHP and SQL. Familiar with C, Java and Perl.
@@ -18,7 +18,7 @@ Skills
 *   **Application Software:** Proficient with Apache, MySQL and Subversion. Familiar with Postfix and Git.
 *   **Virtualisation:** Familiar with Vagrant, VirtualBox, virt-manager and KVM.
 
-Experience
+工作经验
 ----------
 
 *   **University of Manchester**
@@ -92,8 +92,8 @@ Other activities
 * Treasurer, Manchester Classical Association, July 2012 – Present.
 * Webmaster, Manchester Classical Association, November 2007 – Present.
 
-Education
----------
+教育背景
+--------
 
 *   **University of Manchester**
 
@@ -112,5 +112,3 @@ Education
     September 2003 - June 2006
 
     - BSc (Hons) Computer Science (2:1)
-
-
