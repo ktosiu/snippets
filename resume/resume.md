@@ -1,16 +1,13 @@
-Zou,Xu
-======
+# Zou,Xu
 
 13811678926
 xu.zou@outlook.com
 
-Summary
--------
+## Summary
 
 IT professional with broad range of qualifications up to postgraduate level. Experience in public, private and voluntary sectors, including combined eight years of service on several boards.
 
-Skills
-------
+## Skills
 
 *   **Computer Languages:** Proficient with PHP and SQL. Familiar with C, Java and Perl.
 *   **Web Development:** Proficient with HTML and XML. Familiar with CSS and jQuery.
@@ -18,13 +15,12 @@ Skills
 *   **Application Software:** Proficient with Apache, MySQL and Subversion. Familiar with Postfix and Git.
 *   **Virtualisation:** Familiar with Vagrant, VirtualBox, virt-manager and KVM.
 
-Experience
-----------
+## Experience
 
 *   **University of Manchester**
 
     Software Support Officer, December 2013 - Present
-    
+
     - Maintain and develop internal infrastructure and software as part of a small team.
     - Provide both regular and short-notice cover for academic staff due to timetable clashes, illness etc.
     - Provide student-facing support in laboratories and contribute to teaching materials.
@@ -41,7 +37,7 @@ Experience
     - Researched and implemented pension provision for employees in preparation for auto-enrolment.
     - Reduced server-side IT expenditure by 25% as a result of reviewing platform hosting costs, switching providers and consolidating services.
     - Held Financial Conduct Authority approved person status for the duration of this role.
-    
+
 *   **Direct Fleet Insurance Services Ltd**
 
     Technical Manager, March 2009 - November 2013
@@ -55,7 +51,7 @@ Experience
 
 *   **UKUUG Ltd**
 
-    Director, September 2008 - January 2013  
+    Director, September 2008 - January 2013
     Council Member, September 2007 - September 2013
 
     - Organised two annual conferences with other volunteers; lead organiser and conference chair for 2009, 2010 and 2011.
@@ -69,7 +65,7 @@ Experience
     - Elected as a director & trustee of a local sustainable development charity which runs a number of projects in Manchester.
     - Focused on improving the finances of the organisation, including working closely with the finance officer and executive director to identify funding and reserve requirements, and potential reductions in expenditure.
     - Chaired board meetings in rotation with other trustees.
-    
+
 *   **Self Employment**
 
     Freelance Developer, February 2002 - Present
@@ -83,17 +79,15 @@ Experience
     - Developed customised Linux distribution for monitoring of electrical substations.
     - Maintained and developed web-based data analysis software using a combination of PHP and Perl, with PostgreSQL for data storage.
     - Day-to-day maintenance of servers, including Apache (web) and Bind (DNS).
- 
-Other activities
-----------------
+
+## Other activities
 
 * Newsletter Editor, FLOSS UK, August 2014 - Present.
 * Lead organiser of a monthly walking group, May 2012 – Present.
 * Treasurer, Manchester Classical Association, July 2012 – Present.
 * Webmaster, Manchester Classical Association, November 2007 – Present.
 
-Education
----------
+## Education
 
 *   **University of Manchester**
 
@@ -112,5 +106,3 @@ Education
     September 2003 - June 2006
 
     - BSc (Hons) Computer Science (2:1)
-
-

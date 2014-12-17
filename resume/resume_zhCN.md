@@ -1,16 +1,13 @@
-邹旭
-===========
+# 邹旭
 
 13811678926
 xu.zou@outlook.com
 
-个人简介
--------
+## 个人简介
 
 IT professional with broad range of qualifications up to postgraduate level. Experience in public, private and voluntary sectors, including combined eight years of service on several boards.
 
-技术特长
-------
+## 技术特长
 
 *   **Computer Languages:** Proficient with PHP and SQL. Familiar with C, Java and Perl.
 *   **Web Development:** Proficient with HTML and XML. Familiar with CSS and jQuery.
@@ -18,8 +15,7 @@ IT professional with broad range of qualifications up to postgraduate level. Exp
 *   **Application Software:** Proficient with Apache, MySQL and Subversion. Familiar with Postfix and Git.
 *   **Virtualisation:** Familiar with Vagrant, VirtualBox, virt-manager and KVM.
 
-工作经验
-----------
+## 工作经验
 
 *   **University of Manchester**
 
@@ -84,16 +80,14 @@ IT professional with broad range of qualifications up to postgraduate level. Exp
     - Maintained and developed web-based data analysis software using a combination of PHP and Perl, with PostgreSQL for data storage.
     - Day-to-day maintenance of servers, including Apache (web) and Bind (DNS).
  
-Other activities
-----------------
+## Other activities
 
 * Newsletter Editor, FLOSS UK, August 2014 - Present.
 * Lead organiser of a monthly walking group, May 2012 – Present.
 * Treasurer, Manchester Classical Association, July 2012 – Present.
 * Webmaster, Manchester Classical Association, November 2007 – Present.
 
-教育背景
---------
+## 教育背景
 
 *   **University of Manchester**
 
