@@ -12,13 +12,13 @@ docx: $(DOCXS)
 html: $(HTML)
 
 %.pdf: %.md
-	python resume.py tex < $< | pandoc $(PANDOCARGS) -H header.tex -V papersize:'a4paper' -o $@
+	pandoc $< $(PANDOCARGS) -H header.tex -V papersize:'a4paper' -f markdown -t latex -o $@
 
 %.docx: %.md
 	pandoc $< -o $@
 
 %.html: %.md
-	python resume.py html < $< | pandoc -t html -c resume.css -o $@
+	pandoc $< -t html -c resume.css -o $@
 
 clean:
 	rm *.pdf *.html *.docx
