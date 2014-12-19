@@ -1,3 +1,4 @@
+(define (square x) (* x x))
 (define (square-list items)
   (define (iter things answer)
     (if (null? things)
@@ -5,3 +6,5 @@
         (iter (cdr things)
               (cons (square (car things)) answer))))
   (iter items '()))
+
+(square-list (list 1 2 3 4))
