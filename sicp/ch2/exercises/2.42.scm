@@ -1,16 +1,21 @@
-;; Not solved correctly, need to correct it in the future
+(define (make-position col row)
+  (cons col row))
 
-(define empty-board '())
-(define (make-position row col)
-  (cons row col))
-(define (position-row pos) (car pos))
-(define (position-col pos) (cdr pos))
+(define (position-col p)
+  (car p))
+
+(define (position-row p)
+  (cdr p))
+
 (define (position-equal a b)
   (equal? a b))
-(define (adjoin-position row col positions)
-  (append positions (list (make-position row col))))
 
-(define (queens board-size)
+(define empty-board '())
+
+(define (adjoin-position col row positions)
+  (cons (make-position col row) positions))
+
+(define (queens borad-size)
   (define (queen-cols k)
     (if (= k 0)
         (list empty-board)
@@ -20,6 +25,6 @@
           (lambda (rest-of-queens)
             (map (lambda (new-row)
                    (adjoin-position new-row k rest-of-queens))
-                 (enum-range 1 board-size)))
+                 (enumerate-interval 1 borad-size)))
           (queen-cols (- k 1))))))
-  (queen-cols board-size))
+  (queen-cols borad-size))

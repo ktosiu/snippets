@@ -17,5 +17,5 @@
 (define (reverse-r seq)
   (fold-right (lambda (x y) (append y (list x))) '() seq))
 
-(display (reverse-l (list 1 2 3 4 5)))
-(display (reverse-r (list 1 2 3 4 5)))
+(reverse-l (list 1 2 3 4 5))
+(reverse-r (list 1 2 3 4 5))

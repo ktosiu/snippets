@@ -12,10 +12,10 @@
               (cdr rest))))
   (iter init seq))
 
-(display (fold-left / 1 (list 1 2 3)))
-(newline)
-(display (fold-right / 1 (list 1 2 3)))
-(newline)
-(display (fold-right list '() (list 1 2 3)))
-(newline)
-(display (fold-left list '() (list 1 2 3)))
+(fold-left / 1 (list 1 2 3))
+
+(fold-right / 1 (list 1 2 3))
+
+(fold-right list '() (list 1 2 3))
+
+(fold-left list '() (list 1 2 3))

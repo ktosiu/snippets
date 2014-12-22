@@ -16,10 +16,7 @@
               0
               seq))
 
-(display (accumulate + 0 (list 1 2 3 4)))
-(newline)
-(display (my-map abs (list -1 -2 -3)))
-(newline)
-(display (my-append (list 1 2 3) (list 4 5 6)))
-(newline)
-(display (len (list 1 2 3 4 5 6 7 8 9)))
+(accumulate + 0 (list 1 2 3 4))
+(my-map abs (list -1 -2 -3))
+(my-append (list 1 2 3) (list 4 5 6))
+(len (list 1 2 3 4 5 6 7 8 9))

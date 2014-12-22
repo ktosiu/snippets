@@ -10,10 +10,7 @@
    (enum-range 1 n)))
 
 (define (sum seq)
-  (accumulate
-   +
-   0
-   seq))
+  (accumulate + 0 seq))
 
 (define (triples-sum-s s n)
   (filter

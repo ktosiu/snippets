@@ -38,10 +38,7 @@
 
 (define (matrix-square m) (matrix-*-matrix m m))
 
-(display (transpose m))
-(newline)
-(display (matrix-*-vector m v))
-(newline)
-(display (matrix-*-matrix m m))
-(newline)
-(display (matrix-square (matrix-square (matrix-square n))))
+(transpose m)
+(matrix-*-vector m v)
+(matrix-*-matrix m m)
+(matrix-square (matrix-square (matrix-square n)))

@@ -14,4 +14,4 @@
    0
    t))
 
-(display (count-leaves (list (list 1 2 (list 1 2) 3) (list 1 (list 3 4) 2 3))))
+(count-leaves (list (list 1 2 (list 1 2) 3) (list 1 (list 3 4) 2 3)))
