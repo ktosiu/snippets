@@ -27,14 +27,39 @@
   (and (pair? x) (eq? (car x) '+)))
 (define (addend s)
   (cadr s))
+
 (define (augend s)
-  (caddr s))
+  (let ((len (length s)))
+    (if (= len 3)
+        (caddr s)
+        (cons '+ (cddr s)))))
+
 (define (product? x)
   (and (pair? x) (eq? (car x) '*)))
+
 (define (multiplier p)
   (cadr p))
+
 (define (multiplicand p)
-  (caddr p))
+  (let ((len (length p)))
+    (if (= len 3)
+        (caddr p)
+        (cons '* (cddr p)))))
+
+(define (exponentiation? exp)
+  (and (pair? exp) (eq? (car exp) '**)))
+
+(define (base exp)
+  (cadr exp))
+
+(define (exponent exp)
+  (caddr exp))
+
+(define (make-exponentiation base exponent)
+  (cond ((=number? exponent 0) 1)
+        ((=number? exponent 1) base)
+        (else
+         (list '** base exponent))))
 
 (define (deriv exp var)
   (cond ((number? exp) 0)
@@ -49,6 +74,13 @@
                         (deriv (multiplicand exp) var))
           (make-product (deriv (multiplier exp) var)
                         (multiplicand exp))))
+        ((exponentiation? exp)
+         (make-product
+          (make-product
+           (exponent exp)
+           (make-exponentiation (base exp)
+                                (- (exponent exp) 1)))
+          (deriv (base exp) var)))
         (else
          (error "Unknown expression type" exp))))
 
@@ -56,3 +88,5 @@
 (deriv '(+ x 3) 'x)
 (deriv '(* x y) 'x)
 (deriv '(* (* x y) (+ x 3)) 'x)
+(deriv '(** x 2) 'x)
+(deriv '(* x y (+ x 3) (* x y)) 'x)
