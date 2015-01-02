@@ -16,14 +16,12 @@
         (else (intersetion-set (cdr set1) set2))))
 
 (define (union-set set1 set2)
-  (define (remove predicate set)
-    (if (null? set)
-        '()
-        (if (predicate (car set))
-            (remove predicate (cdr set))
-            (cons (car set) (remove predicate (cdr set))))))
-  (append set1
-          (remove (lambda (x) (elem-of-set? x set1))
-                  set2)))
+  (cond ((null? set1) set2)
+        ((null? set2) set1)
+        ((elem-of-set? (car set1) set2)
+         (union-set (cdr set1) set2))
+        (else
+         (cons (car set1)
+               (union-set (cdr set1) set2)))))
 
 (union-set '(a b e) '(a b c d e))

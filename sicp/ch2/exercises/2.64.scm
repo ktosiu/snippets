@@ -18,5 +18,6 @@
   (car (partial-tree elems (length elems))))
 
 (define tree (list->tree '(1 3 5 7 9 11)))
+
 (tree->list-1 tree)
 (tree->list-2 tree)
