@@ -31,10 +31,10 @@
         (+ (weight left) (weight right))))
 
 (define (choose-branch bit branch)
-  ((cond ((= bit 0) (left-branch branch))
-         ((= bit 1) (right-branch branch))
-         (else
-          (error "bad bit: " bit)))))
+  (cond ((= bit 0) (left-branch branch))
+        ((= bit 1) (right-branch branch))
+        (else
+         (error "bad bit: " bit))))
 
 (define (decode bits tree)
   (define (decode-1 bits current-branch)

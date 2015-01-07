@@ -1,0 +1,11 @@
+(define (unios-set-btree s1 s2)
+  (let ((t1 (tree->list-1 s1))
+        (t2 (tree->list-1 s2)))
+    (let ((u (union-set t1 t2)))
+      (list->tree u))))
+
+(define (intersection-set-btree s1 s2)
+  (let ((t1 (tree->list-1 s1))
+        (t2 (tree->list-1 s2)))
+    (let ((i (intersection-set t1 t2)))
+      (list->tree i))))

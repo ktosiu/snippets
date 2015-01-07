@@ -13,3 +13,6 @@
       '()
       (append (encode-symbol (car message) tree)
               (encode (cdr message) tree))))
+
+(define code '(A D A B B C A))
+(encode code sample-tree)
