@@ -11,7 +11,7 @@
       (cdr data)
       (error "bad tagged data" data)))
 
-(define *op-table* (make-hash))
+(define *op-table* (make-hash-table))
 (define (put op type proc)
   (hash-set! *op-table* (list op type) proc))
 (define (get op type)
