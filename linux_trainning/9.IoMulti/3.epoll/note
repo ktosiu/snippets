@@ -1,0 +1,80 @@
+PLAY!!!!!!
+
+win1
+
+mkfifo p q
+./epoll p q
+
+------------------------
+win2
+cat > p
+
+------------------------
+win1
+Opened "p" on fd 4
+
+-----------------------------
+win2
+ctrl z
+[1]+  Stopped                 cat > p
+-------------------------------
+
+win2
+cat > q
+--------------------------------
+win1
+Opened "q" on fd 5
+About to epoll_wait()
+ctrl z
+
+[1]+  Stopped                 ./epoll p q
+-------------------------------------
+
+win2
+qqqqqqq
+
+ctrl z
+[2]+  Stopped                 cat > q
+---------------------------------
+win2
+fg %1
+cat > p
+ppppppp
+-------------------------------------
+
+
+
+win1
+fg
+./epoll p q
+Opened "q" on fd 5
+About to epoll_wait()
+Ready: 1
+ fd=5; events: EPOLLIN 
+read 6 bytes: qqqqq
+
+About to epoll_wait()
+Ready: 1
+ fd=5; events: EPOLLIN 
+read 5 bytes: dadf
+
+----------------------------------
+win2
+Type Control-D to terminate “cat >p”
+
+fg
+Type Control-D to terminate “cat >q”
+
+---------------------------------
+win1
+
+Ready: 1
+ fd=4; events: EPOLLHUP
+closing fd 4
+About to epoll_wait()
+
+Ready: 1
+ fd=5; events: EPOLLHUP
+closing fd 5
+All file descriptors closed; bye
+

@@ -1,0 +1,4 @@
+gcc -g -o calendarTime calendarTime.c 
+date
+./calendarTime 
+

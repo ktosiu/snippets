@@ -1,0 +1,18 @@
+[root@localhost network]# ./ucase_server &
+[1] 31423
+[root@localhost network]# ./ucase_client ::1 hello
+Server received 5 bytes from (::1, 60960)
+Response 1: HELLO
+
+[root@localhost network]# ./is_seqno_server &
+[1] 32311
+[root@localhost network]# ./is_seqno_client localhost
+Connection from (localhost, 58681)
+Sequence number: 0
+[root@localhost network]# ./is_seqno_client localhost 10
+Connection from (localhost, 58683)
+Sequence number: 1
+[root@localhost network]# ./is_seqno_client localhost
+Connection from (localhost, 58685)
+Sequence number: 11
+

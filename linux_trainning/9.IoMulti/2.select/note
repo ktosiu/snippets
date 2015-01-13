@@ -1,0 +1,5 @@
+gcc -g -o select select.c 
+./select 10 0r
+./select 0 0r
+./select - 0r 1w
+

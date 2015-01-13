@@ -1,0 +1,10 @@
+[root@localhost fifo]# gcc -g -o fifo_seqnum_client fifo_seqnum_client.c
+[root@localhost fifo]# ./fifo_seqnum_server &
+[1] 10251
+[root@localhost fifo]# ./fifo_seqnum_client 3
+0
+[root@localhost fifo]# ./fifo_seqnum_client 2
+3
+[root@localhost fifo]# ./fifo_seqnum_client
+5
+

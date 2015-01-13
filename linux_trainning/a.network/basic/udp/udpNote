@@ -1,0 +1,9 @@
+# ./udp_server
+waiting for a packet...
+received packet from 127.0.0.1:
+contents: This is a test message
+
+
+
+# ./udp_client
+sending: 'This is a test message'

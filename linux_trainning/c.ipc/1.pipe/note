@@ -1,0 +1,12 @@
+ls |wc -l
+
+[root@localhost ipc]# ./popen_glob
+pattern: popen_glob*
+popen_glob
+popen_glob.c
+ 2 matching files
+ pclose() status == 0
+pattern: x*
+ 0 matching files
+ pclose() status == 0x200
+Ctrl+d

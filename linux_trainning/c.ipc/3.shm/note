@@ -1,0 +1,30 @@
+[root@localhost shm]# gcc -g -o pshm_create pshm_create.c -lrt
+[root@localhost shm]# ./pshm_create -c ./demo_shm 10000
+[root@localhost shm]# ls -l /dev/shm/
+total 0
+-rw-------. 1 root root 10000 Dec 25 16:37 demo_shm
+
+================================================================================
+[root@localhost shm]# gcc -g -o pshm_write pshm_write.c -lrt
+[root@localhost shm]# gcc -g -o pshm_read pshm_read.c -lrt
+[root@localhost shm]# ./pshm_create -c /demo_shm 0
+[root@localhost shm]# ls -l /dev/shm/
+total 0
+-rw-------. 1 root root 0 Dec  1 11:08 demo_shm
+[root@localhost shm]# ./pshm_write /demo_shm "helloworld"
+Resized to 10 bytes
+copying 10 bytes
+[root@localhost shm]# ls -l /dev/shm/
+total 4
+-rw-------. 1 root root 10 Dec  1 11:08 demo_shm
+[root@localhost shm]# ./pshm_read /demo_shm
+helloworld
+
+[root@localhost shm]# ls -l /dev/shm/
+total 4
+-rw-------. 1 root root 10 Dec  1 11:08 demo_shm
+================================================================================
+[root@localhost shm]# ./pshm_remove /demo_shm
+[root@localhost shm]# ls -l /dev/shm/
+total 0
+

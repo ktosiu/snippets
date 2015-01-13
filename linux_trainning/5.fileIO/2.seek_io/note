@@ -1,0 +1,6 @@
+gcc -g -o seek_io seek_io.c
+touch tfile
+./seek_io tfile s100000 wabc
+ls -l tfile
+./seek_io tfile s10000 R5
+

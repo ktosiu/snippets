@@ -1,0 +1,9 @@
+  g++ -g -o sample sample.cpp -L/usr/lib64 -lboost_thread-mt
+
+  ldd sample 
+  nm sample 
+  c++filt 
+  objdump -d sample 
+  readelf -a sample 
+  size sample 
+  strings sample 

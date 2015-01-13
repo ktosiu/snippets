@@ -1,0 +1,7 @@
+gcc -g -o mycat mycat.c
+./mycat test  note
+
+./mycat myfile >> myfile
+./mycat < myfile > myfile
+./mycat < myfile
+

@@ -1,0 +1,8 @@
+  gcc -g -o asctime asctime.c
+  gcc -g -o ctime ctime.c
+  gcc -g -o gettimeofday gettimeofday.c
+  gcc -g -o gtime gtime.c
+  gcc -g -o localtime localtime.c
+  gcc -g -o mktime mktime.c
+  gcc -g -o time time.c
+

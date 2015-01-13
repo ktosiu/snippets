@@ -1,0 +1,18 @@
+Should be 2 windows
+
+win1
+# ./tcp_server
+accept client 127.0.0.1
+uuuuuuuuuuu
+123413421
+
+win2
+# ./tcp_client
+connected to server
+Welcome to my server
+Enter string to send:uuuuuuuuuuu
+received:uuuuuuuuuuu
+Enter string to send:123413421
+received:123413421
+Enter string to send:quit
+

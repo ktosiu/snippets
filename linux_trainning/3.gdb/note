@@ -1,0 +1,5 @@
+gcc -g -o coredump coredump.c
+ulimit -a
+ulimit -c unlimited
+./coredump
+

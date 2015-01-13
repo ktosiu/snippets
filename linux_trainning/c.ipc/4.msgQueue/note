@@ -1,0 +1,29 @@
+[root@localhost msgQueue]# ./pmsg_create -cx /mq
+[root@localhost msgQueue]# ./pmsg_getattr /mq
+Maximum # of messages on queue: 10
+Maximum message size: 8192
+# of messages currently on queue: 0
+[root@localhost msgQueue]# ./pmsg_unlink /mq
+
+
+[root@localhost msgQueue]# ./pmsg_create -cx /mq
+[root@localhost msgQueue]# ./pmsg_send /mq msg-a 5
+[root@localhost msgQueue]# ./pmsg_send /mq msg-b 0
+[root@localhost msgQueue]# ./pmsg_send /mq msg-c 10
+[root@localhost msgQueue]# ./pmsg_receive /mq
+Read 5 bytes; priority = 10
+msg-c
+[root@localhost msgQueue]# ./pmsg_receive /mq
+Read 5 bytes; priority = 5
+msg-a
+[root@localhost msgQueue]# ./pmsg_receive /mq
+Read 5 bytes; priority = 0
+msg-b
+[root@localhost msgQueue]# ./pmsg_receive /mq
+^C
+[root@localhost msgQueue]# ./pmsg_getattr /mq
+Maximum # of messages on queue: 10
+Maximum message size: 8192
+# of messages currently on queue: 0
+[root@localhost msgQueue]# ./pmsg_unlink /mq
+

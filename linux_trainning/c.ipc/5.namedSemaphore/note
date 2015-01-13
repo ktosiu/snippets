@@ -1,0 +1,12 @@
+[root@localhost namedSemaphore]# ./psem_create -c /demo 600 0
+[root@localhost namedSemaphore]# ./psem_wait /demo &
+[1] 30214
+[root@localhost namedSemaphore]# ./psem_getvalue /demo
+1
+30214 sem_wait() succeeded
+[1]+  Done                    ./psem_wait /demo
+[root@localhost namedSemaphore]# ./psem_post /demo
+[root@localhost namedSemaphore]# ./psem_getvalue /demo
+2
+[root@localhost namedSemaphore]# ./psem_close /demo
+
