@@ -3,17 +3,19 @@
 (define (square x) (* x x))
 ;;
 (define (attach-tag type-tag contents)
-  (cons type-tag contents))
+  (if (number? contents)
+      contents
+      (cons type-tag contents)))
 
 (define (type-tag data)
-  (if (pair? data)
-      (car data)
-      (error "bad tagged data" data)))
+  (cond ((number? data) 'scheme-number)
+        ((pair? data) (car data))
+        (else (error "Bad tagged datum -- TYPE-TAG" data))))
 
 (define (contents data)
-  (if (pair? data)
-      (cdr data)
-      (error "bad tagged data" data)))
+  (cond ((number? data) data)
+        ((pair? data) (cdr data))
+        (else (error "Bad tagged dataum -- TYPE-TAG" data))))
 
 (define *op-table* (make-hash-table))
 (define (put op type proc)
@@ -48,6 +50,12 @@
        (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
+  (put 'equ? '(scheme-number scheme-number)
+       (lambda (x y)
+         (= x y)))
+  (put '=zero? '(scheme-number)
+       (lambda (x)
+         (= x 0)))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
   'done)
@@ -88,6 +96,13 @@
        (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
+  (put 'equ? '(rational rational)
+       (lambda (x y)
+         (and (= (numer x) (numer y))
+              (= (denom x) (denom y)))))
+  (put '=zero? '(rational)
+       (lambda (x)
+         (= (numer x) 0)))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -119,6 +134,15 @@
        (lambda (z1 z2) (tag (mul-complex z1 z2))))
   (put 'div '(complex complex)
        (lambda (z1 z2) (tag (div-complex z1 z2))))
+  (put 'equ? '(complex complex)
+       (lambda (z1 z2)
+         (and (= (real-part z1) (real-part z2))
+              (= (imag-part z1) (imag-part z2)))))
+  (put '=zero? '(complex)
+       (lambda (x)
+         (and (= (real-part x) 0)
+              (= (imag-part x) 0))))
+
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
@@ -214,10 +238,23 @@
 (define (div x y)
   (apply-generic 'div x y))
 
+(define (equ? x y)
+  (apply-generic 'equ? x y))
+
+(define (=zero? x)
+  (apply-generic '=zero? x))
+
 (add (make-scheme-number 12) (make-scheme-number 21))
+(equ? (make-scheme-number 12) (make-scheme-number 12))
+(equ? (make-scheme-number 12) (make-scheme-number 21))
 (define z1 (make-complex-from-mag-ang 3 4))
 (define z2 (make-complex-from-real-imag 3 4))
 (add z1 z2)
 (sub z1 z2)
 (mul z1 z2)
 (div z1 z2)
+(equ? z1 z2)
+
+(=zero? (make-scheme-number 0))
+(=zero? (make-complex-from-real-imag 0 0))
+(=zero? (make-rational 0 1))
