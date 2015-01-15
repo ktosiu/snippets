@@ -23,14 +23,46 @@
 (define (get op type)
   (hash-ref *op-table* (list op type)))
 
+;; For conversions
+(define *coercion-table* (make-hash-table))
+(define (put-coercion from to proc)
+  (hash-set! *coercion-table* (list from to) proc))
+(define (get-coercion from to)
+  (hash-ref *coercion-table* (list from to)))
+
+;(define (apply-generic op . args)
+;  (let ((type-tags (map type-tag args)))
+;    (let ((proc (get op type-tags)))
+;      (if proc
+;          (apply proc (map contents args))
+;          (error
+;           "No method for these types -- APPLY-GENERIC"
+;           (list op type-tags))))))
+
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
       (if proc
           (apply proc (map contents args))
-          (error
-           "No method for these types -- APPLY-GENERIC"
-           (list op type-tags))))))
+          (if (= (length args) 2)
+              (let ((type1 (car type-tags))
+                    (type2 (cadr type-tags))
+                    (a1 (car args))
+                    (a2 (cadr args)))
+                (if (not (eq? type1 type2))
+                    (let ((t1->t2 (get-coercion type1 type2))
+                          (t2->t1 (get-coercion type2 type1)))
+                      (cond (t1->t2
+                             (apply-generic op (t1->t2 a1) a2))
+                            (t2->t1
+                             (apply-generic op a1 (t2->t1 a2)))
+                            (else
+                             (error "No method for these types"
+                                    (list op type-tags)))))
+                    (error "No method for these types"
+                           (list op type-tags))))
+              (error "No method for these types"
+                     (list op type-tags)))))))
 
 ;; Generic operators
 (define (add x y) (apply-generic 'add x y))
@@ -207,6 +239,7 @@
 (install-rectangular-package)
 (install-polar-package)
 
+;; Generic functions
 (define (make-scheme-number n)
   ((get 'make 'scheme-number) n))
 
@@ -244,6 +277,11 @@
 (define (=zero? x)
   (apply-generic '=zero? x))
 
+(put-coercion 'scheme-number 'complex
+              (lambda (n)
+                (make-complex-from-real-imag (contents n) 0)))
+
+;; Test Cases
 (add (make-scheme-number 12) (make-scheme-number 21))
 (equ? (make-scheme-number 12) (make-scheme-number 12))
 (equ? (make-scheme-number 12) (make-scheme-number 21))
@@ -258,3 +296,9 @@
 (=zero? (make-scheme-number 0))
 (=zero? (make-complex-from-real-imag 0 0))
 (=zero? (make-rational 0 1))
+
+(define (exp x y)
+  (apply-generic 'exp x y))
+
+;(exp (make-scheme-number 2) (make-scheme-number 10))
+(add (make-scheme-number 10) z2)
