@@ -90,6 +90,9 @@
          (= x 0)))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
+  (put 'raise '(scheme-number)
+       (lambda (x)
+         (make-rational x 1)))
   'done)
 
 ;; Rational number package
@@ -137,6 +140,9 @@
          (= (numer x) 0)))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
+  (put 'raise '(rational)
+       (lambda (x)
+         (make-complex-from-real-imag x 0)))
   'done)
 
 (define (install-complex-package)
@@ -281,6 +287,9 @@
               (lambda (n)
                 (make-complex-from-real-imag (contents n) 0)))
 
+(define (raise x)
+  (apply-generic 'raise x))
+
 ;; Test Cases
 (add (make-scheme-number 12) (make-scheme-number 21))
 (equ? (make-scheme-number 12) (make-scheme-number 12))
@@ -302,3 +311,7 @@
 
 ;(exp (make-scheme-number 2) (make-scheme-number 10))
 (add (make-scheme-number 10) z2)
+(define num (make-scheme-number 100))
+(define num_rational (raise num))
+(define num_complex (raise num_rational))
+;(raise num_complex)
