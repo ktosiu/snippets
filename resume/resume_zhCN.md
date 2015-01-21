@@ -1,14 +1,12 @@
 # 邹旭
 
-13811678926
-
-xu.zou@outlook.com
+13811678926 / xu.zou@outlook.com
 
 ## 技术特长
 
-*   **编程语言：** 精通C/C++、熟悉Python/Shell
+*   **编程语言：** 精通C/C++、熟悉Python/Shell/Powershell
 *   **操作系统：** 精通Linux/Windows
-*   **工具软件：** 精通Viusal Studio、Emacs、Subversion、Git
+*   **工具软件：** 精通Viusal Studio、VMWare、Emacs、Git
 
 ## 工作经验
 
@@ -16,12 +14,36 @@ xu.zou@outlook.com
 
     软件开发工程师，2011 - 现在
     
-    - Maintain and develop internal infrastructure and software as part of a small team.
-    - Provide both regular and short-notice cover for academic staff due to timetable clashes, illness etc.
-    - Provide student-facing support in laboratories and contribute to teaching materials.
-    - Develop testing environments to match production, using Vagrant and VirtualBox.
-    - Built PHP web service to abstract sending email in student exercises, with auditing and rate limiting.
-    - Integrated multiple support systems and authored CPAN modules: [OTRS::ForwardQueue](https://metacpan.org/pod/OTRS::ForwardQueue) and [WWW::BrokenLinks](https://metacpan.org/pod/WWW::BrokenLinks).
+    - 参与开发和维护一个基于C++的应用编程框架。框架以组件的形式对通用的模块进行封装，可以在多个项目中重用。包含一套适用于多核CPU的多线程编程组件、实现了一套从应用层到IP层的协议栈、实现了一套组件间通讯的机制、以及系统日志及事件通知的机制。框架总共包含超过20万行的跨平台C++代码，以及一套完善的编程文档。
+    - 参与开发了一个分布式的实时数据收集、传输、分发系统，作为下一代金融数据和新闻信息传输的主干网络。主要采用的技术为：C++、UDP多播协议、Linux操作系统。
+    - 负责规划、设计并搭建了供开发和测试使用的虚拟实验室。主要采用的技术为：VMWare、VLAN...
+    - 负责系统的性能测试以及性能优化。涉及操作系统参数调优，应用程序代码优化...
+    - 系统故障分析和维护。分析系统之间的交互、收集输入输出的数据、对程序进行调试和测试。
+    - 对项目代码进行重构。采用gtest单元测试框架、以及有选择地进行测试驱动开发。
+
+## 业余项目
+
+*   **rimeime**
+    
+    https://github.com/zouivex/librime
+
+    - 为该项目实现了一个double array trie，主要用于进行拼音串的前缀匹配
+    - 贡献了部分开发文档
+
+*   **SICP读书笔记项目**
+
+    https://github.com/zouivex/snippets的sicp子目录
+
+    - 学习函数式编程语言Scheme
+    - 完成课后的习题，并撰写读书报告系列博客
+
+*   **技术博客**
+    
+    http://blog.zouxu.com.cn/
+
+    - 博客包含我翻译的技术文章
+    - 经典书籍的读书报告
+    - 工作中的技术积累情况
 
 ## 教育背景
 
@@ -35,4 +57,4 @@ xu.zou@outlook.com
 
     2002.9 - 2006.7
 
-    - 英语语言文学学士
+    - 学士，英语语言文学
