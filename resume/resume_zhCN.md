@@ -30,20 +30,14 @@
     - 为该项目实现了一个double array trie，主要用于进行拼音串的前缀匹配
     - 贡献了部分开发文档
 
-*   **SICP读书笔记项目**
-
-    https://github.com/zouivex/snippets的sicp子目录
-
-    - 学习函数式编程语言Scheme
-    - 完成课后的习题，并撰写读书报告系列博客
-
 *   **技术博客**
     
     http://blog.zouxu.com.cn/
 
-    - 博客包含我翻译的技术文章
+    - 翻译的技术文章
     - 经典书籍的读书报告
     - 工作中的技术积累情况
+    - 学习函数式编程语言Scheme
 
 ## 教育背景
 
