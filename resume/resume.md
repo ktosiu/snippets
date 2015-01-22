@@ -1,6 +1,6 @@
 # Zou, Xu
 
-13811678926 / xu.zou@outlook.com
+13811678926 / zouivex@gmail.com
 
 ## Skills
 

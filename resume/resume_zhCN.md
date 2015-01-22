@@ -1,6 +1,6 @@
 # 邹旭
 
-13811678926 / xu.zou@outlook.com
+13811678926 / zouivex@gmail.com
 
 ## 技术特长
 
