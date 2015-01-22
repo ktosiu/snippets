@@ -1,12 +1,10 @@
-# Zou,Xu
+# Zou, Xu
 
-13811678926
-
-xu.zou@outlook.com
+13811678926 / xu.zou@outlook.com
 
 ## Skills
 
-*   **Programming Languages:** Proficient with C++. Familiar with C, Python and Shell.
+*   **Programming Languages:** Proficient with C++. Familiar with C, Python, Shell and Powershell.
 *   **Operating Systems:** Proficient with Linux, Windows.
 *   **Application Software:** Proficient with Visual Studio, Emacs, Subversion, Git.
 
@@ -16,19 +14,31 @@ xu.zou@outlook.com
 
     Software Engineer, April 2011 - Present
 
-    - Maintain and develop internal infrastructure and software as part of a small team.
-    - Provide both regular and short-notice cover for academic staff due to timetable clashes, illness etc.
-    - Provide student-facing support in laboratories and contribute to teaching materials.
-    - Develop testing environments to match production, using Vagrant and VirtualBox.
-    - Built PHP web service to abstract sending email in student exercises, with auditing and rate limiting.
-    - Integrated multiple support systems and authored CPAN modules: [OTRS::ForwardQueue](https://metacpan.org/pod/OTRS::ForwardQueue) and [WWW::BrokenLinks](https://metacpan.org/pod/WWW::BrokenLinks).
+    Thomson Reuters (www.thomsonreuters.com) is a leading financial information provider over the world. I worked in the Real Time Core department since 2011 and was responsible for the development of Thomson Reuters' “Next Generation Network” infrastructure. Includes:
+
+    - Maintain and develop internal development framework and software as part of a small team.
+    - Maintain and develop the next generation data distribution network infrastructure.
+    - Develop development and testing environments to match production, using Vmware.
+    - Responsible for the performance testing and performance tuning of our applications. 
+    - Periodically refactor our source code base to keep our source code clear and easy to understand. Most of the time in a TDD manner.
 
 ## Other activities
 
-* Newsletter Editor, FLOSS UK, August 2014 - Present.
-* Lead organiser of a monthly walking group, May 2012 – Present.
-* Treasurer, Manchester Classical Association, July 2012 – Present.
-* Webmaster, Manchester Classical Association, November 2007 – Present.
+*   **rimeime**
+    
+    https://github.com/zouivex/librime
+
+    - rimeime is an portable open source Chinese Input Method Engine, supports Windows, Linux and Mac platform.
+    - I implemented a double array trie data structure, mostly used in Pinyin string prefix match.
+
+*   **Personal Blog**
+    
+    http://blog.zouxu.com.cn/
+
+    - Translate some interesting computer science articles and blogs.
+    - Reading report of some good books.
+    - Record of experience learn from my daily work.
+    - Learn the functional programming language: Scheme.
 
 ## Education
 
