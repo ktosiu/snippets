@@ -21,4 +21,4 @@ html: $(HTML)
 	pandoc $< -t html -c resume.css -o $@
 
 clean:
-	rm -rf *.pdf *.html *.docx auto
+	rm -rf *.pdf *.html *.docx *.log auto
