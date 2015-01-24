@@ -5,9 +5,7 @@
 struct list* list_create()
 {
     struct list* pList = (struct list*)malloc(sizeof(struct list));
-    pList->count = 0;
-    pList->first = 0;
-    pList->last = 0;
+    pList->head = 0;
     return pList;
 }
 
@@ -15,26 +13,24 @@ struct list* list_create()
 void list_destroy(struct list* list)
 {
     assert(list != 0);
-    struct list_node* pNode = list->first;
-    while(pNode != list->last)
+    struct list_node* node = list->head;
+    while(node != 0)
     {
-        struct list_node* current_node = pNode;
-        pNode = pNode->next;
+        struct list_node* current_node = node;
+        node = node->next;
         free(current_node);
     }
-
-    free(list->last);
-    free(list);
 }
 
 /*Clear the values*/
 void list_clear(struct list* list)
 {
     assert(list != 0);
-    struct list_node* pNode = list->first;
-    while(pNode != list->last)
+    struct list_node* node = list->head;
+    while(node != 0)
     {
-        free(pNode->value);
+        free(node->value);
+        node = node->value;
     }
 }
 
@@ -49,30 +45,30 @@ void list_push_back(struct list* list, void* value)
     struct list_node* node = calloc(1, sizeof(struct list_node));
     assert(node != 0);
     node->value = value;
-    if(list->last == 0)
+    if(list->head == 0)
     {
-        list->first = node;
-        list->last = node;
+        list->head = node;
     }
     else
     {
-        list->last->next = node;
-        node->prev = list->last;
-        list->last = node;
+        struct list_node* p = list->head;
+        while(p->next) p = p->next;
+        p->next = node;
     }
-    list->count++;
 }
 
 void* list_pop_back(struct list* list)
 {
     assert(list != 0);
-    if(list->count == 0)
+    if(list->head)
     {
-        return 0;
+        struct list_node* node = list->head;
+        while(node->next) node = node->next;
+        return list_remove(list, node);
     }
     else
     {
-        return list_remove(list, list->last);
+        return 0;
     }
 }
 
@@ -82,31 +78,27 @@ void list_push_front(struct list* list, void* value)
     struct list_node* node = calloc(1, sizeof(struct list_node));
     node->value = value;
 
-    if(list->first == 0)
+    if(list->head == 0)
     {
-        list->first = node;
-        list->last = node;
+        list->head = node;
     }
     else
     {
-        node->next = list->first;
-        list->first->prev = node;
-        list->first = node;
+        node->next = list->head;
+        list->head = node;
     }
-    list->count++;
 }
 
 void* list_pop_front(struct list* list)
 {
     assert(list != 0);
-
-    if(list->count == 0)
+    if(list->head)
     {
-        return 0;
+        return list_remove(list, list->head);
     }
     else
     {
-        return list_remove(list, list->first);
+        return 0;
     }
 }
 
@@ -117,33 +109,19 @@ void* list_remove(struct list* list, struct list_node* node)
     assert(node != 0);
 
     /*List only has one node!*/
-    if(node == list->first && node == list->last)
+    if(node == list->head)
     {
-        list->first = 0;
-        list->last = 0;
+        list->head = node->next;
     }
-    /*Remove the first node*/
-    else if (node == list->first)
-    {
-        list->first = node->next;
-        list->first->prev = 0;
-    }
-    /*Remove the last node*/
-    else if(node == list->last)
-    {
-        list->last = node->prev;
-        list->last->next = 0;
-    }
-    /*Remove the middle node*/
+    /*Remove other nodes*/
     else
     {
-        struct list_node* prev_node = node->prev;
-        struct list_node* next_node = node->next;
-        prev_node->next = next_node;
-        next_node->prev = prev_node;
+        // Get prev
+        struct list_node* prev = list->head;
+        while(prev->next != node) prev = prev->next;
+        prev->next = node->next;
     }
 
-    list->count--;
     result = node->value;
     free(node);
     return result;
@@ -152,7 +130,7 @@ void* list_remove(struct list* list, struct list_node* node)
 void list_print(struct list* list)
 {
     assert(list);
-    struct list_node* node = list->first;
+    struct list_node* node = list->head;
     while(node)
     {
         printf("%s\n", node->value);
@@ -171,15 +149,15 @@ void list_bubble_sort(struct list* list, list_compare cmp)
 {
     assert(list != 0);
     int sorted = 1;
-    struct list_node* last_node = list->last;
+
     do
     {
         sorted = 1;
-        for(struct list_node* cur = list->first;
+        for(struct list_node* cur = list->head;
             cur != 0;
             cur = cur->next)
         {
-            if(cur != last_node)
+            if(cur->next)
             {
                 if(cmp(cur->value, cur->next->value) > 0)
                 {

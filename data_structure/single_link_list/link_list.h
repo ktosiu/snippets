@@ -7,15 +7,12 @@ typedef int (*list_compare)(const void* a, const void* b);
 struct list_node
 {
     struct list_node* next;
-    struct list_node* prev;
     void* value;
 };
 
 struct list
 {
-    int count;
-    struct list_node* first;
-    struct list_node* last;
+    struct list_node* head;
 };
 
 struct list* list_create();
@@ -30,4 +27,3 @@ void* list_remove(struct list* list, struct list_node* node);
 void list_print(struct list* list);
 
 void list_bubble_sort(struct list* list, list_compare cmp);
-struct list* list_merge_sort(struct list* list, list_compare cmp);
