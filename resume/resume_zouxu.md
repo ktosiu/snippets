@@ -14,7 +14,7 @@
 
     Software Engineer, April 2011 - Present
 
-    Thomson Reuters (www.thomsonreuters.com) is a leading financial information provider over the world. I worked in the Real Time Core department since 2011 and was responsible for the development of Thomson Reuters' “Next Generation Network” infrastructure. Includes:
+    Thomson Reuters (www.thomsonreuters.com) is a leading financial information provider over the world. I have been working in the Real Time Core department since 2011 and was responsible for the development of Thomson Reuters' “Next Generation Network” infrastructure. The main works are summarized as follows:
 
     - Maintain and develop internal development framework and software as part of a small team.
     - Maintain and develop the next generation data distribution network infrastructure.
