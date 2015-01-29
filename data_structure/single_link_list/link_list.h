@@ -27,3 +27,4 @@ void* list_remove(struct list* list, struct list_node* node);
 void list_print(struct list* list);
 
 void list_bubble_sort(struct list* list, list_compare cmp);
+void list_reverse(struct list* list);

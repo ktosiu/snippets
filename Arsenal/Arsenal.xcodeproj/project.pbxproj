@@ -1,0 +1,412 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		107591991A7A81E2002DE63E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107591981A7A81E2002DE63E /* AppDelegate.swift */; };
+		1075919B1A7A81E2002DE63E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1075919A1A7A81E2002DE63E /* ViewController.swift */; };
+		1075919D1A7A81E2002DE63E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1075919C1A7A81E2002DE63E /* Images.xcassets */; };
+		107591A01A7A81E2002DE63E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1075919E1A7A81E2002DE63E /* Main.storyboard */; };
+		107591AC1A7A81E3002DE63E /* ArsenalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107591AB1A7A81E3002DE63E /* ArsenalTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		107591A61A7A81E3002DE63E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1075918B1A7A81E2002DE63E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 107591921A7A81E2002DE63E;
+			remoteInfo = Arsenal;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		107591931A7A81E2002DE63E /* Arsenal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Arsenal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		107591971A7A81E2002DE63E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		107591981A7A81E2002DE63E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1075919A1A7A81E2002DE63E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		1075919C1A7A81E2002DE63E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1075919F1A7A81E2002DE63E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		107591A51A7A81E3002DE63E /* ArsenalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArsenalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		107591AA1A7A81E3002DE63E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		107591AB1A7A81E3002DE63E /* ArsenalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArsenalTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		107591901A7A81E2002DE63E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		107591A21A7A81E3002DE63E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1075918A1A7A81E2002DE63E = {
+			isa = PBXGroup;
+			children = (
+				107591951A7A81E2002DE63E /* Arsenal */,
+				107591A81A7A81E3002DE63E /* ArsenalTests */,
+				107591941A7A81E2002DE63E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		107591941A7A81E2002DE63E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				107591931A7A81E2002DE63E /* Arsenal.app */,
+				107591A51A7A81E3002DE63E /* ArsenalTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		107591951A7A81E2002DE63E /* Arsenal */ = {
+			isa = PBXGroup;
+			children = (
+				107591981A7A81E2002DE63E /* AppDelegate.swift */,
+				1075919A1A7A81E2002DE63E /* ViewController.swift */,
+				1075919C1A7A81E2002DE63E /* Images.xcassets */,
+				1075919E1A7A81E2002DE63E /* Main.storyboard */,
+				107591961A7A81E2002DE63E /* Supporting Files */,
+			);
+			path = Arsenal;
+			sourceTree = "<group>";
+		};
+		107591961A7A81E2002DE63E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				107591971A7A81E2002DE63E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		107591A81A7A81E3002DE63E /* ArsenalTests */ = {
+			isa = PBXGroup;
+			children = (
+				107591AB1A7A81E3002DE63E /* ArsenalTests.swift */,
+				107591A91A7A81E3002DE63E /* Supporting Files */,
+			);
+			path = ArsenalTests;
+			sourceTree = "<group>";
+		};
+		107591A91A7A81E3002DE63E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				107591AA1A7A81E3002DE63E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		107591921A7A81E2002DE63E /* Arsenal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 107591AF1A7A81E3002DE63E /* Build configuration list for PBXNativeTarget "Arsenal" */;
+			buildPhases = (
+				1075918F1A7A81E2002DE63E /* Sources */,
+				107591901A7A81E2002DE63E /* Frameworks */,
+				107591911A7A81E2002DE63E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Arsenal;
+			productName = Arsenal;
+			productReference = 107591931A7A81E2002DE63E /* Arsenal.app */;
+			productType = "com.apple.product-type.application";
+		};
+		107591A41A7A81E3002DE63E /* ArsenalTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 107591B21A7A81E3002DE63E /* Build configuration list for PBXNativeTarget "ArsenalTests" */;
+			buildPhases = (
+				107591A11A7A81E3002DE63E /* Sources */,
+				107591A21A7A81E3002DE63E /* Frameworks */,
+				107591A31A7A81E3002DE63E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				107591A71A7A81E3002DE63E /* PBXTargetDependency */,
+			);
+			name = ArsenalTests;
+			productName = ArsenalTests;
+			productReference = 107591A51A7A81E3002DE63E /* ArsenalTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1075918B1A7A81E2002DE63E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = Arsenal;
+				TargetAttributes = {
+					107591921A7A81E2002DE63E = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					107591A41A7A81E3002DE63E = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = 107591921A7A81E2002DE63E;
+					};
+				};
+			};
+			buildConfigurationList = 1075918E1A7A81E2002DE63E /* Build configuration list for PBXProject "Arsenal" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1075918A1A7A81E2002DE63E;
+			productRefGroup = 107591941A7A81E2002DE63E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				107591921A7A81E2002DE63E /* Arsenal */,
+				107591A41A7A81E3002DE63E /* ArsenalTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		107591911A7A81E2002DE63E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1075919D1A7A81E2002DE63E /* Images.xcassets in Resources */,
+				107591A01A7A81E2002DE63E /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		107591A31A7A81E3002DE63E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1075918F1A7A81E2002DE63E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1075919B1A7A81E2002DE63E /* ViewController.swift in Sources */,
+				107591991A7A81E2002DE63E /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		107591A11A7A81E3002DE63E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				107591AC1A7A81E3002DE63E /* ArsenalTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		107591A71A7A81E3002DE63E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 107591921A7A81E2002DE63E /* Arsenal */;
+			targetProxy = 107591A61A7A81E3002DE63E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1075919E1A7A81E2002DE63E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1075919F1A7A81E2002DE63E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		107591AD1A7A81E3002DE63E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		107591AE1A7A81E3002DE63E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		107591B01A7A81E3002DE63E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Arsenal/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		107591B11A7A81E3002DE63E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Arsenal/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		107591B31A7A81E3002DE63E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ArsenalTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Arsenal.app/Contents/MacOS/Arsenal";
+			};
+			name = Debug;
+		};
+		107591B41A7A81E3002DE63E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ArsenalTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Arsenal.app/Contents/MacOS/Arsenal";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1075918E1A7A81E2002DE63E /* Build configuration list for PBXProject "Arsenal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				107591AD1A7A81E3002DE63E /* Debug */,
+				107591AE1A7A81E3002DE63E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		107591AF1A7A81E3002DE63E /* Build configuration list for PBXNativeTarget "Arsenal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				107591B01A7A81E3002DE63E /* Debug */,
+				107591B11A7A81E3002DE63E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		107591B21A7A81E3002DE63E /* Build configuration list for PBXNativeTarget "ArsenalTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				107591B31A7A81E3002DE63E /* Debug */,
+				107591B41A7A81E3002DE63E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1075918B1A7A81E2002DE63E /* Project object */;
+}

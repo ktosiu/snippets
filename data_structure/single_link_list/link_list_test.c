@@ -16,7 +16,9 @@ int main()
 
     list_push_front(test_list, "string_4");
 
-    list_bubble_sort(test_list, (list_compare)strcmp);
+    /*list_bubble_sort(test_list, (list_compare)strcmp);*/
+
+    list_reverse(test_list);
 
     /*list_remove(test_list, test_list->first);*/
 

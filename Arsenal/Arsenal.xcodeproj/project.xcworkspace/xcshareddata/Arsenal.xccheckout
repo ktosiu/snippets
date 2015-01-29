@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>924EFBBD-54D9-4EA8-9EC6-4658431553B1</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Arsenal</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>11E4821F81D32873576C5D9E54EA676EB7C801DB</key>
+		<string>https://github.com/zouivex/snippets.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Arsenal/Arsenal.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>11E4821F81D32873576C5D9E54EA676EB7C801DB</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/zouivex/snippets.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>11E4821F81D32873576C5D9E54EA676EB7C801DB</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>11E4821F81D32873576C5D9E54EA676EB7C801DB</string>
+			<key>IDESourceControlWCCName</key>
+			<string>snippets</string>
+		</dict>
+	</array>
+</dict>
+</plist>

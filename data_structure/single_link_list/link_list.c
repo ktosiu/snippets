@@ -150,8 +150,7 @@ void list_bubble_sort(struct list* list, list_compare cmp)
     assert(list != 0);
     int sorted = 1;
 
-    do
-    {
+    do {
         sorted = 1;
         for(struct list_node* cur = list->head;
             cur != 0;
@@ -168,4 +167,18 @@ void list_bubble_sort(struct list* list, list_compare cmp)
         }
     }
     while(!sorted);
+}
+
+void list_reverse(struct list* list) {
+    assert(list != 0);
+    struct list_node* prev = 0;
+    struct list_node* current = list->head;
+
+    while(current) {
+        struct list_node* next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    list->head = prev;
 }
