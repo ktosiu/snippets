@@ -17,14 +17,14 @@
         ((pair? data) (cdr data))
         (else (error "Bad tagged dataum -- TYPE-TAG" data))))
 
-(define *op-table* (make-hash-table))
+(define *op-table* (make-hash))
 (define (put op type proc)
   (hash-set! *op-table* (list op type) proc))
 (define (get op type)
   (hash-ref *op-table* (list op type)))
 
 ;; For conversions
-(define *coercion-table* (make-hash-table))
+(define *coercion-table* (make-hash))
 (define (put-coercion from to proc)
   (hash-set! *coercion-table* (list from to) proc))
 (define (get-coercion from to)
@@ -297,7 +297,7 @@
 (define z1 (make-complex-from-mag-ang 3 4))
 (define z2 (make-complex-from-real-imag 3 4))
 
-;(magnitude z1)
+(magnitude z1)
 (add z1 z2)
 (sub z1 z2)
 (mul z1 z2)
@@ -312,7 +312,7 @@
   (apply-generic 'exp x y))
 
 ;(exp (make-scheme-number 2) (make-scheme-number 10))
-(add (make-scheme-number 10) z2)
+;(add (make-scheme-number 10) z2)
 (define num (make-scheme-number 100))
 (define num_rational (raise num))
 (define num_complex (raise num_rational))
