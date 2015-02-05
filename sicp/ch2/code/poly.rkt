@@ -1,4 +1,6 @@
 (load "generic_operators.rkt")
+(require (lib "trace.ss"))
+
 (define (install-polynomial-package)
   (define (make-poly variable term-list)
     (cons variable term-list))
@@ -76,6 +78,8 @@
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
+  ;(trace add-terms)
+  ;(trace mul-terms)
   'done)
 
 (install-polynomial-package)
@@ -84,7 +88,8 @@
   ((get 'make 'polynomial) var terms))
 
 ;; Test Code
-(define p1 (make-polynomial 'x '((1 5) (2 10) (5 2))))
-(define p2 (make-polynomial 'x '((3 5) (4 10) (6 2))))
+(define p1 (make-polynomial 'x '((5 5) (3 10) (1 2))))
+(define p2 (make-polynomial 'x '((3 5) (2 10) (1 2))))
+(add p2 p1)
 (add p1 p2)
 (mul p1 p2)
