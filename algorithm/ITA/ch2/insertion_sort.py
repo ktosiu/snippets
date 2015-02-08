@@ -11,3 +11,7 @@ def insertion_sort(A):
 unsorted_data = [3, 4, 1, 6, 9, 2, 7]
 insertion_sort(unsorted_data)
 print unsorted_data
+
+data = []
+insertion_sort(data)
+print data
