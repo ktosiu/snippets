@@ -71,6 +71,15 @@
                               (term-list p2)))
         (error "Polys not in same variable -- mul-poly" (list p1 p2))))
 
+  (define (zero-poly? p)
+    (let ((terms (term-list p)))
+      (if (empty-termlist? terms)
+          #t
+          (and (=zero? (coeff (first-term terms)))
+               (zero-poly?
+                (make-poly (variable p)
+                           (rest-terms terms)))))))
+
   (define (tag p) (attach-tag 'polynomial p))
   (put 'add '(polynomial polynomial)
        (lambda (p1 p2) (tag (add-poly p1 p2))))
@@ -78,8 +87,8 @@
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
-  ;(trace add-terms)
-  ;(trace mul-terms)
+  (put '=zero? '(polynomial)
+       (lambda (p) (zero-poly? p)))
   'done)
 
 (install-polynomial-package)
@@ -87,9 +96,13 @@
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
+(define (=zero? p)
+  (apply-generic 'polynomial p))
+
 ;; Test Code
 (define p1 (make-polynomial 'x '((5 5) (3 10) (1 2))))
 (define p2 (make-polynomial 'x '((3 5) (2 10) (1 2))))
-(add p2 p1)
-(add p1 p2)
-(mul p1 p2)
+;(add p2 p1)
+;(add p1 p2)
+;(mul p1 p2)
+(=zero? p1)
