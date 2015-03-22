@@ -2,11 +2,13 @@
 
 13811678926 / zouivex@gmail.com
 
-## 技术特长
+## 专业特长
 
-*   **编程语言：** 精通C/C++、熟悉Python/Shell/Powershell
-*   **操作系统：** 精通Linux/Windows
-*   **工具软件：** 精通Viusal Studio、VMWare、Emacs、Git
+*   **编程语言：** 精通C/C++、熟练掌握Python/Shell/Powershell
+*   **操作系统：** 精通Linux/Windows环境编程
+*   **网络编程：** 精通TCP/UDP/IP协议，精通跨平台的网络编程和网络系统调优
+*   **工具软件：** 精通Viusal Studio、Jenkins、VMWare、Emacs、Git
+*   **英语水平：** 英语专业8级
 
 ## 工作经验
 
@@ -31,15 +33,6 @@
 
     - rimeime是一款跨平台的开源输入法软件，支持windows、linux、Mac各平台。
     - 为该项目实现了一个double array trie，主要用于进行拼音串的前缀匹配。
-
-*   **技术博客**
-    
-    http://blog.zouxu.com.cn/
-
-    - 翻译的技术文章
-    - 经典书籍的读书报告
-    - 工作中的技术积累情况
-    - 学习函数式编程语言Scheme
 
 ## 教育背景
 
