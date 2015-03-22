@@ -5,8 +5,10 @@
 ## Skills
 
 *   **Programming Languages:** Proficient with C++. Familiar with C, Python, Shell and Powershell.
+*   **Networking:** Proficient with cross platform network programming and network tuning.
 *   **Operating Systems:** Proficient with Linux, Windows.
 *   **Application Software:** Proficient with Visual Studio, Emacs, Subversion, Git.
+*   **English:** TEM8 (Test For English Majors Level 8)
 
 ## Experience
 
@@ -30,15 +32,6 @@
 
     - rimeime is an portable open source Chinese Input Method Engine, supports Windows, Linux and Mac platform.
     - I implemented a double array trie data structure, mostly used in Pinyin string prefix match.
-
-*   **Personal Blog**
-    
-    http://blog.zouxu.com.cn/
-
-    - Translate some interesting computer science articles and blogs.
-    - Reading report of some good books.
-    - Record of experience learn from my daily work.
-    - Learn the functional programming language: Scheme.
 
 ## Education
 
