@@ -3,7 +3,7 @@ PDFS = $(SRC:.md=.pdf)
 DOCXS = $(SRC:.md=.docx)
 HTML=$(SRC:.md=.html)
 
-PANDOCARGS = --latex-engine=xelatex
+PANDOCARGS = --latex-engine=xelatex --variable fontsize=12pt
 
 all: $(PDFS) $(DOCXS) $(HTML)
 
