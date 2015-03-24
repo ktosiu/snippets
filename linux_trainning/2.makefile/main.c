@@ -1,6 +1,6 @@
 #include <hello.h>
 
-int main(void)
+int main()
 {
     printHello();
     return 0;

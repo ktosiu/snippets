@@ -4,10 +4,9 @@
 
 pthread_key_t key;
 
-void *thread2(void *arg)
-{
+void *thread2(void *arg) {
     int tsd = 5;
-    printf("thread %ld is running\n",pthread_self());
+    printf("thread %ld is running\n", pthread_self());
 
     //associate a thread-specific value with a key
     //Different threads may bind different values to the same key
@@ -16,8 +15,7 @@ void *thread2(void *arg)
     printf("thread %ld returns %d\n", pthread_self(), *((int*)pthread_getspecific(key)) );
 }
 
-void *thread1(void *arg)
-{
+void *thread1(void *arg) {
     int tsd = 0;
     pthread_t thid2;
 
@@ -30,8 +28,7 @@ void *thread1(void *arg)
     printf("thread %ld returns %d\n", pthread_self(), *((int*)pthread_getspecific(key)) );
 }
 
-int main(void)
-{
+int main() {
     pthread_t thid1;
     printf("main thread begins running\n");
 

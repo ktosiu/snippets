@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 void  print();
-sem_t *sem;                                                                                                    
+sem_t *sem;
 
 int main(int argc,char * argv[])
 {

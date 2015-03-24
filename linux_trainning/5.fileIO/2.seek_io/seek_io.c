@@ -18,22 +18,22 @@ int main(int argc, char *argv[])
 		exit(0);
 	}
 
-    //rw-rw-rw-
-	fd = open(argv[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |S_IROTH | S_IWOTH); 
+        //rw-rw-rw-
+	fd = open(argv[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |S_IROTH | S_IWOTH);
 
 	for (ap = 2; ap < argc; ap++) {
 		switch (argv[ap][0]) {
-		case 'r': // read bytes at current offset, as text 
-		case 'R': // read bytes at current offset, in hex 
+		case 'r': // read bytes at current offset, as text
+		case 'R': // read bytes at current offset, in hex
 			len = atoi(&argv[ap][1]);
 			buf = malloc(len);
 			numRead = read(fd, buf, len);
 			if (numRead == 0) {
 				printf("%s: end-of-file\n", argv[ap]);
-			} 
+			}
 			else {
 				printf("%s: ", argv[ap]);
-				for (j = 0; j < numRead; j++) 
+				for (j = 0; j < numRead; j++)
 				{
 					if (argv[ap][0] == 'r') //text
 						printf("%c",    isprint((unsigned char) buf[j]) ? buf[j] : '?');
@@ -44,11 +44,11 @@ int main(int argc, char *argv[])
 			}
 			free(buf);
 			break;
-		case 'w': // write string at current offset 
+		case 'w': // write string at current offset
 			numWritten = write(fd, &argv[ap][1], strlen(&argv[ap][1]));
 			printf("%s: wrote %ld bytes\n", argv[ap], (long) numWritten);
 			break;
-		case 's': // shift file offset 
+		case 's': // shift file offset
 			offset = atoi(&argv[ap][1]);
 			lseek(fd, offset, SEEK_SET);
 			printf("%s: seek succeeded\n", argv[ap]);

@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 void  print();
 void  *thread_function(void *arg);
@@ -14,8 +15,8 @@ int main(int argc,char * argv[])
     pthread_t tid[5];
     if(argc != 2)
     {
-            printf("Usage:%s name. \n",argv[0]);
-            exit(0);
+        printf("Usage:%s name. \n",argv[0]);
+        exit(0);
     }
     //init semaphore
     sem=sem_open(argv[1],O_CREAT,0644,3);
@@ -52,7 +53,7 @@ void *thread_function(void *arg)
 }
 
 void print()
-{ 
+{
     int value;
     sem_getvalue(sem,&value);
     printf("pthread_id is %ld, get the resource, left resource is %d\n",pthread_self(),value);
