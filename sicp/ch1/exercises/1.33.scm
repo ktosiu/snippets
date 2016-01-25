@@ -1,28 +1,35 @@
-(define (accumulate combiner null-value term a next b filter)
+(define (filtered-accumulate combiner null-value term a next b predicate?)
   (if (> a b)
       null-value
-      (combiner (term a)
-                (accumulate combiner null-value term (next a) next b))))
+      (if (predicate? a)
+          (combiner (term a)
+                    (filtered-accumulate combiner null-value term (next a) next b predicate?))
+          (filtered-accumulate combiner null-value term (next a) next b predicate?))))
 
-(define (accumulate-iter combiner null-value term a next b)
+(define (filtered-accumulate-iter combiner null-value term a next b predicate?)
   (define (iter a result)
     (if (> a b)
         result
-        (iter (next a)
-              (combiner (term a)
-                        result))))
+        (if (predicate? a)
+            (iter (next a)
+                  (combiner (term a)
+                            result))
+            (iter (next a)
+                  result))))
   (iter a null-value))
 
-(define (sum term a next b)
-  (accumulate-iter + 0 term a next b))
+(filtered-accumulate +
+                     0
+                     (lambda (x) x)
+                     1
+                     (lambda (x) (+ 1 x))
+                     100
+                     prime?)
 
-(define (product term a next b)
-  (accumulate-iter * 1 term a next b))
-
-(sum
- (lambda(x) x)
- 1
- (lambda(x) (+ 1 x))
- 100)
-
-(product (lambda(x) x) 1 (lambda(x) (+ 1 x)) 15)
+(filtered-accumulate-iter +
+                          0
+                          (lambda (x) x)
+                          1
+                          (lambda (x) (+ 1 x))
+                          100
+                          prime?)

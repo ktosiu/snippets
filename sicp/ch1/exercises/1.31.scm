@@ -17,4 +17,16 @@
               (* (term i) result))))
   (iter a 1))
 
+(define (square x) (* x x))
+
+(define (pi n)
+  (* 4
+     (product (lambda (x)
+                (/ (* (* x 2.0) (* 2 (+ x 1))) (square (+ 1 (* 2 x)))))
+              1
+              (lambda (x) (+ x 1))
+              n)))
+
+(pi 100)
+
 (factorial 5)
