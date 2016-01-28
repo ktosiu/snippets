@@ -1,15 +1,11 @@
 (define (d k)
   (- (* k 2) 1))
 
-(define (square x) (* x x))
-
 (define (tan-cf x k)
-  (define (tan-cf-recursive i)
-    (if (= i k)
-        0
-        (/ (square x)
-           (- (d i) (tan-cf-recursive (+ i 1))))))
-  (/ (tan-cf-recursive 1) x))
+  (/ (cont-frac-iter (lambda (i) (- (* x x)))
+                 d
+                 k)
+     (- x)))
 
 (tan-cf 0.5 1000)
 
