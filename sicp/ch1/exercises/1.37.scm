@@ -1,12 +1,11 @@
 ;; Recursive version
 (define (cont-frac n d k)
-  (cont-frac-rec n d k 1))
-
-(define (cont-frac-rec n d k i)
-  (if (= i k)
-      (/ (n i) (d i))
-      (/ (n i)
-         (+ (d i) (cont-frac-rec n d k (+ i 1))))))
+  (define (cont-frac-rec i)
+    (if (= i k)
+        (/ (n i) (d i))
+        (/ (n i)
+           (+ (d i) (cont-frac-rec (+ i 1))))))
+  (cont-frac-rec 1))
 
 ;; Iterative version
 (define (cont-frac-iter n d k)
